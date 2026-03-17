@@ -155,4 +155,5 @@ uvicorn main:app --reload --port 8000
 
 ## 📄 Licencia
 
-MIT — libre para usar, modificar y distribuir.
+MIT © [Thomas Sagredo](https://github.com/thomas-sagredo) — libre para usar, modificar y distribuir.  
+Ver archivo [LICENSE](LICENSE) para más detalles.
