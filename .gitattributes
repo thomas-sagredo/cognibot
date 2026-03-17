@@ -1,0 +1,7 @@
+# Normalizar line endings para todos los archivos de texto
+* text=auto
+
+# Forzar LF para scripts de shell (crítico para que funcionen en Linux/Docker)
+*.sh text eol=lf
+Dockerfile text eol=lf
+entrypoint.sh text eol=lf

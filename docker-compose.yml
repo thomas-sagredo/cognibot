@@ -1,0 +1,61 @@
+version: "3.9"
+
+services:
+
+  # ─── BASE DE DATOS ────────────────────────────────────────────────────────────
+  mysql:
+    image: mysql:8.0
+    container_name: cognibot-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-cognibot2025}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-cognibot_db}
+      MYSQL_USER: ${MYSQL_USER:-cognibot}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-cognibot2025}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p${MYSQL_ROOT_PASSWORD:-cognibot2025}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  # ─── BACKEND ─────────────────────────────────────────────────────────────────
+  backend:
+    build:
+      context: ./proyects
+      dockerfile: Dockerfile
+    container_name: cognibot-backend
+    environment:
+      DATABASE_URL: mysql+pymysql://${MYSQL_USER:-cognibot}:${MYSQL_PASSWORD:-cognibot2025}@mysql:3306/${MYSQL_DATABASE:-cognibot_db}
+    ports:
+      - "8000:8000"
+    depends_on:
+      mysql:
+        condition: service_healthy
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8000/" ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ─── FRONTEND ─────────────────────────────────────────────────────────────────
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        VITE_API_BASE_URL: ${VITE_API_BASE_URL:-http://localhost:8000}
+    container_name: cognibot-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
+
+volumes:
+  mysql_data:

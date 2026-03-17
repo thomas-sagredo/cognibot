@@ -1,0 +1,379 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Sistema de diseño avanzado de Lovable */
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+
+    --primary: 262 83% 58%;
+    --primary-foreground: 0 0% 100%;
+    --primary-glow: 262 83% 70%;
+
+    --secondary: 217 91% 60%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 220 13% 95%;
+    --muted-foreground: 220 9% 46%;
+
+    --accent: 262 83% 58%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 262 83% 58%;
+
+    --radius: 0.75rem;
+
+    /* Gradientes profesionales */
+    --gradient-primary: linear-gradient(135deg, hsl(262 83% 58%), hsl(217 91% 60%));
+    --gradient-secondary: linear-gradient(135deg, hsl(217 91% 60%), hsl(190 95% 60%));
+    --gradient-dark: linear-gradient(135deg, hsl(262 83% 25%), hsl(217 91% 30%));
+    
+    /* Sombras elegantes */
+    --shadow-glow: 0 0 40px hsl(262 83% 58% / 0.3);
+    --shadow-elegant: 0 10px 30px -10px hsl(222 47% 11% / 0.2);
+    
+    /* Transiciones suaves */
+    --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 262 83% 58%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 262 83% 58%;
+  }
+}
+
+/* Clases utilitarias personalizadas */
+@layer utilities {
+  .gradient-primary {
+    background: var(--gradient-primary);
+  }
+  
+  .gradient-secondary {
+    background: var(--gradient-secondary);
+  }
+  
+  .shadow-glow {
+    box-shadow: var(--shadow-glow);
+  }
+  
+  .shadow-elegant {
+    box-shadow: var(--shadow-elegant);
+  }
+  
+  .hover-scale {
+    transition: var(--transition-smooth);
+  }
+  
+  .hover-scale:hover {
+    transform: scale(1.02);
+  }
+  
+  .hover-glow:hover {
+    box-shadow: var(--shadow-glow);
+  }
+}
+
+/* CogniBot - Professional Chatbot Builder Design System */
+
+@layer base {
+  :root {
+    /* Core Background & Text */
+    --background: 225 20% 98%;
+    --foreground: 222 20% 15%;
+
+    /* Cards & Surfaces */
+    --card: 0 0% 100%;
+    --card-foreground: 222 20% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 20% 15%;
+
+    /* Brand Colors - CogniBot Professional Theme */
+    --primary: 220 100% 50%;
+    --primary-foreground: 0 0% 100%;
+    --primary-hover: 220 100% 45%;
+
+    --secondary: 220 15% 96%;
+    --secondary-foreground: 222 20% 25%;
+
+    /* CogniBot Professional Colors */
+    --cognibot-primary: 220 100% 50%;
+    --cognibot-gradient: linear-gradient(135deg, hsl(220 100% 50%), hsl(260 100% 60%));
+    --cognibot-shadow: 220 100% 50% / 0.15;
+
+    /* Professional Node Colors - As Requested */
+    /* Inicio: azul principal */
+    --node-start: 220 100% 97%;
+    --node-start-border: 220 100% 50%;
+    --node-start-accent: 220 100% 45%;
+    
+    /* Mensaje: violeta */
+    --node-message: 260 100% 97%;
+    --node-message-border: 260 100% 60%;
+    --node-message-accent: 260 100% 55%;
+    
+    /* Opciones: verde */
+    --node-option: 120 70% 97%;
+    --node-option-border: 120 70% 45%;
+    --node-option-accent: 120 70% 40%;
+    
+    /* Acción: celeste */
+    --node-action: 180 100% 97%;
+    --node-action-border: 180 100% 45%;
+    --node-action-accent: 180 100% 40%;
+    
+    /* Condición: naranja */
+    --node-condition: 30 100% 97%;
+    --node-condition-border: 30 100% 55%;
+    --node-condition-accent: 30 100% 50%;
+    
+    /* Finalización: gris */
+    --node-end: 215 15% 97%;
+    --node-end-border: 215 15% 50%;
+    --node-end-accent: 215 15% 45%;
+
+    /* UI States */
+    --muted: 220 15% 96%;
+    --muted-foreground: 220 12% 50%;
+
+    --accent: 220 100% 50%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 13% 92%;
+    --input: 220 13% 94%;
+    --ring: 220 100% 50%;
+
+    --radius: 0.75rem;
+
+    /* Professional Shadows */
+    --shadow-professional: 0 4px 12px -2px hsl(220 100% 50% / 0.08);
+    --shadow-elevated: 0 8px 24px -4px hsl(220 100% 50% / 0.12);
+    --shadow-floating: 0 12px 32px -8px hsl(220 100% 50% / 0.16);
+
+    --sidebar-background: 0 0% 99%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 97%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 92%;
+    --sidebar-ring: 220 100% 50%;
+  }
+
+  .dark {
+    /* Dark theme for CogniBot */
+    --background: 222 20% 8%;
+    --foreground: 210 40% 96%;
+
+    --card: 222 20% 12%;
+    --card-foreground: 210 40% 96%;
+
+    --popover: 222 20% 12%;
+    --popover-foreground: 210 40% 96%;
+
+    --primary: 220 100% 65%;
+    --primary-foreground: 222 20% 8%;
+    --primary-hover: 220 100% 60%;
+
+    --secondary: 217 32% 18%;
+    --secondary-foreground: 210 40% 92%;
+
+    /* CogniBot Dark Colors */
+    --cognibot-primary: 220 100% 65%;
+    --cognibot-gradient: linear-gradient(135deg, hsl(220 100% 65%), hsl(260 100% 70%));
+    --cognibot-shadow: 220 100% 65% / 0.2;
+
+    /* Dark Professional Node Colors */
+    /* Inicio: azul principal */
+    --node-start: 220 50% 15%;
+    --node-start-border: 220 100% 65%;
+    --node-start-accent: 220 100% 60%;
+    
+    /* Mensaje: violeta */
+    --node-message: 260 50% 15%;
+    --node-message-border: 260 100% 70%;
+    --node-message-accent: 260 100% 65%;
+    
+    /* Opciones: verde */
+    --node-option: 120 35% 15%;
+    --node-option-border: 120 70% 55%;
+    --node-option-accent: 120 70% 50%;
+    
+    /* Acción: celeste */
+    --node-action: 180 50% 15%;
+    --node-action-border: 180 100% 55%;
+    --node-action-accent: 180 100% 50%;
+    
+    /* Condición: naranja */
+    --node-condition: 30 50% 15%;
+    --node-condition-border: 30 100% 65%;
+    --node-condition-accent: 30 100% 60%;
+    
+    /* Finalización: gris */
+    --node-end: 215 10% 15%;
+    --node-end-border: 215 25% 60%;
+    --node-end-accent: 215 25% 55%;
+
+    --muted: 217 32% 17%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 250 84% 65%;
+    --accent-foreground: 222 15% 8%;
+
+    --destructive: 0 80% 65%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 217 32% 17%;
+    --input: 217 32% 17%;
+    --ring: 250 84% 65%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+  }
+
+  /* Professional CogniBot Scrollbars */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    @apply bg-muted/30;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    @apply bg-cognibot-primary/60 rounded-full;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    @apply bg-cognibot-primary/80;
+  }
+
+  /* Professional animations */
+  .fade-in {
+    animation: fadeInUp 0.4s ease-out;
+  }
+
+  .slide-in {
+    animation: slideIn 0.3s ease-out;
+  }
+
+  .scale-hover {
+    transition: transform 0.2s ease-out;
+  }
+
+  .scale-hover:hover {
+    transform: scale(1.02);
+  }
+}
+
+@layer components {
+  /* Professional shadows */
+  .shadow-professional {
+    box-shadow: var(--shadow-professional);
+  }
+
+  .shadow-elevated {
+    box-shadow: var(--shadow-elevated);
+  }
+
+  .shadow-floating {
+    box-shadow: var(--shadow-floating);
+  }
+
+  /* Glass morphism effect */
+  .glass {
+    @apply bg-white/10 backdrop-blur-md border border-white/20;
+  }
+
+  .glass-dark {
+    @apply bg-black/10 backdrop-blur-md border border-white/10;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 5px hsl(var(--cognibot-primary) / 0.3);
+  }
+  50% {
+    box-shadow: 0 0 15px hsl(var(--cognibot-primary) / 0.6);
+  }
+}

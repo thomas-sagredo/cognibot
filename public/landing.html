@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Cognibot - Soluciones de chatbots automatizados para WhatsApp, Facebook Messenger e Instagram. Mejora la atención al cliente con inteligencia artificial.">
+    <title>Cognibot | Chatbots Automatizados para Empresas</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        body {
+            font-family: 'Poppins', sans-serif;
+            scroll-behavior: smooth;
+        }
+        
+        .gradient-bg {
+            background: linear-gradient(135deg, #2563eb 0%, #10b981 100%);
+        }
+        
+        .chat-mockup {
+            position: relative;
+            height: 500px;
+            background-color: #f3f4f6;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .chat-header {
+            background: linear-gradient(135deg, #2563eb 0%, #10b981 100%);
+            color: white;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .chat-body {
+            padding: 15px;
+            height: calc(100% - 120px);
+            overflow-y: auto;
+        }
+        
+        .message {
+            max-width: 70%;
+            padding: 10px 15px;
+            border-radius: 18px;
+            margin-bottom: 10px;
+            position: relative;
+        }
+        
+        .bot-message {
+            background-color: #e5e7eb;
+            border-top-left-radius: 4px;
+            align-self: flex-start;
+        }
+        
+        .user-message {
+            background-color: #3b82f6;
+            color: white;
+            border-top-right-radius: 4px;
+            margin-left: auto;
+        }
+        
+        .chat-input {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            padding: 15px;
+            background-color: white;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+        
+        @keyframes floating {
+            0% {
+                transform: translateY(0px);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
+                transform: translateY(0px);
+            }
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        
+        .feature-card {
+            transition: all 0.3s ease;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-50">
+    <!-- Header/Navigation -->
+    <header class="sticky top-0 z-50 bg-white shadow-sm">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <!-- Logo -->
+            <div class="flex items-center">
+                <div class="w-10 h-10 rounded-full gradient-bg flex items-center justify-center text-white font-bold text-xl mr-2">
+                    CM
+                </div>
+                <span class="text-xl font-bold text-gray-800">Cognibot</span>
+            </div>
+
+            <!-- Desktop Navigation -->
+            <nav class="hidden md:flex space-x-8">
+                <a href="#home" class="text-gray-800 hover:text-blue-600 font-medium">Inicio</a>
+                <a href="#features" class="text-gray-800 hover:text-blue-600 font-medium">Funciones</a>
+                <a href="#pricing" class="text-gray-800 hover:text-blue-600 font-medium">Precios</a>
+                <a href="#demo" class="text-gray-800 hover:text-blue-600 font-medium">Demo</a>
+                <a href="#contact" class="text-gray-800 hover:text-blue-600 font-medium">Contacto</a>
+                <a href="/login.html" class="text-gray-800 hover:text-blue-600 font-medium">Iniciar Sesión</a>
+
+            </nav>
+
+            <!-- Mobile Menu Button -->
+            <button id="mobile-menu-button" class="md:hidden text-gray-800">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-white py-2 px-4 shadow-lg">
+            <a href="#home" class="block py-2 text-gray-800 hover:text-blue-600">Inicio</a>
+            <a href="#features" class="block py-2 text-gray-800 hover:text-blue-600">Funciones</a>
+            <a href="#pricing" class="block py-2 text-gray-800 hover:text-blue-600">Precios</a>
+            <a href="#demo" class="block py-2 text-gray-800 hover:text-blue-600">Demo</a>
+            <a href="#contact" class="block py-2 text-gray-800 hover:text-blue-600">Contacto</a>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section id="home" class="gradient-bg text-white py-20">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row items-center">
+            <div class="md:w-1/2 mb-10 md:mb-0">
+                <h1 class="text-4xl md:text-5xl font-bold mb-6">Automatiza tus conversaciones con Cognibot</h1>
+                <p class="text-xl mb-8">Potencia la comunicación de tu empresa con chatbots inteligentes para WhatsApp, Facebook Messenger e Instagram. Mejora la experiencia de tus clientes y escala tu atención al instante.</p>
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <a href="#demo" class="bg-white text-blue-600 hover:bg-gray-100 font-bold py-3 px-6 rounded-full text-center transition duration-300">Probar demo gratis</a>
+                    <a href="#contact" class="bg-transparent border-2 border-white hover:bg-white hover:text-blue-600 font-bold py-3 px-6 rounded-full text-center transition duration-300">Agendar consulta</a>
+                </div>
+            </div>
+            <div class="md:w-1/2 flex justify-center">
+                <img src="https://images.unsplash.com/photo-1611162616475-465b187b9a8f?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=800&q=80" alt="Chatbot en acción" class="rounded-xl shadow-2xl w-full max-w-md floating">
+            </div>
+        </div>
+    </section>
+
+    <!-- Platforms Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-2xl md:text-3xl font-bold text-center text-gray-800 mb-12">Integración con las principales plataformas</h2>
+            <div class="flex flex-wrap justify-center gap-8 md:gap-16">
+                <div class="flex flex-col items-center">
+                    <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fab fa-whatsapp text-green-600 text-3xl"></i>
+                    </div>
+                    <span class="font-medium text-gray-800">WhatsApp</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fab fa-facebook-messenger text-blue-600 text-3xl"></i>
+                    </div>
+                    <span class="font-medium text-gray-800">Messenger</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="w-16 h-16 bg-pink-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fab fa-instagram text-pink-600 text-3xl"></i>
+                    </div>
+                    <span class="font-medium text-gray-800">Instagram</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-robot text-blue-600 text-3xl"></i>
+                    </div>
+                    <span class="font-medium text-gray-800">IA Integrada</span>
+                </div>
+                <div class="flex flex-col items-center">
+                    <div class="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-cloud text-purple-600 text-3xl"></i>
+                    </div>
+                    <span class="font-medium text-gray-800">En la Nube</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Cómo Cognibot transforma tu negocio</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Automatiza conversaciones, mejora la experiencia del cliente y escala tu atención sin límites.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Feature 1 -->
+                <div class="bg-white p-8 rounded-xl shadow-md feature-card">
+                    <div class="w-14 h-14 gradient-bg rounded-full flex items-center justify-center text-white text-2xl mb-6">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Respuestas instantáneas</h3>
+                    <p class="text-gray-600">Atiende consultas las 24/7 sin demoras. Tus clientes reciben respuestas inmediatas a cualquier hora del día.</p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="bg-white p-8 rounded-xl shadow-md feature-card">
+                    <div class="w-14 h-14 gradient-bg rounded-full flex items-center justify-center text-white text-2xl mb-6">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Inteligencia Artificial</h3>
+                    <p class="text-gray-600">Chatbots que aprenden y mejoran con el tiempo. Entienden el contexto y ofrecen respuestas cada vez más precisas.</p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="bg-white p-8 rounded-xl shadow-md feature-card">
+                    <div class="w-14 h-14 gradient-bg rounded-full flex items-center justify-center text-white text-2xl mb-6">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Escalabilidad</h3>
+                    <p class="text-gray-600">Ideal para municipalidades y empresas. Atiende miles de conversaciones simultáneas sin aumentar tu personal.</p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="bg-white p-8 rounded-xl shadow-md feature-card">
+                    <div class="w-14 h-14 gradient-bg rounded-full flex items-center justify-center text-white text-2xl mb-6">
+                        <i class="fas fa-cogs"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Integración simple</h3>
+                    <p class="text-gray-600">Conéctate con tus sistemas existentes (CRM, ERP) y automatiza flujos de trabajo complejos.</p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="bg-white p-8 rounded-xl shadow-md feature-card">
+                    <div class="w-14 h-14 gradient-bg rounded-full flex items-center justify-center text-white text-2xl mb-6">
+                        <i class="fas fa-language"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Multidioma</h3>
+                    <p class="text-gray-600">Atiende clientes en múltiples idiomas sin necesidad de traductores humanos.</p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="bg-white p-8 rounded-xl shadow-md feature-card">
+                    <div class="w-14 h-14 gradient-bg rounded-full flex items-center justify-center text-white text-2xl mb-6">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="text-xl font-bold text-gray-800 mb-3">Seguridad garantizada</h3>
+                    <p class="text-gray-600">Datos protegidos con encriptación de grado empresarial y cumplimiento de normativas de privacidad.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Demo Section -->
+    <section id="demo" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="flex flex-col lg:flex-row items-center gap-12">
+                <div class="lg:w-1/2">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-6">Prueba nuestro chatbot demo</h2>
+                    <p class="text-xl text-gray-600 mb-8">Interactúa con nuestro chatbot de demostración y descubre cómo puede transformar la comunicación de tu empresa.</p>
+                    <ul class="space-y-4 mb-8">
+                        <li class="flex items-start">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="w-6 h-6 rounded-full gradient-bg flex items-center justify-center text-white">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                            </div>
+                            <span class="ml-3 text-gray-700">Simula consultas frecuentes de clientes</span>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="w-6 h-6 rounded-full gradient-bg flex items-center justify-center text-white">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                            </div>
+                            <span class="ml-3 text-gray-700">Prueba respuestas automatizadas</span>
+                        </li>
+                        <li class="flex items-start">
+                            <div class="flex-shrink-0 mt-1">
+                                <div class="w-6 h-6 rounded-full gradient-bg flex items-center justify-center text-white">
+                                    <i class="fas fa-check text-xs"></i>
+                                </div>
+                            </div>
+                            <span class="ml-3 text-gray-700">Experimenta la integración con IA</span>
+                        </li>
+                    </ul>
+                    <a href="#contact" class="inline-block gradient-bg hover:opacity-90 text-white font-bold py-3 px-8 rounded-full transition duration-300">Solicitar demo personalizada</a>
+                </div>
+
+                <div class="lg:w-1/2">
+                    <div class="chat-mockup">
+                        <div class="chat-header">
+                            <div class="w-8 h-8 rounded-full bg-white flex items-center justify-center mr-3">
+                                <i class="fas fa-robot text-blue-600"></i>
+                            </div>
+                            <div>
+                                <h3 class="font-bold">Cognibot Assistant</h3>
+                                <p class="text-xs opacity-80">En línea</p>
+                            </div>
+                        </div>
+
+                        <div class="chat-body" id="chat-body">
+                            <div class="message bot-message">
+                                ¡Hola! Soy el asistente virtual de Cognibot. ¿En qué puedo ayudarte hoy?
+                            </div>
+                            <div class="message bot-message">
+                                Puedes preguntarme sobre:
+                                <br>- Precios y planes
+                                <br- Integraciones con WhatsApp <br>- Funciones avanzadas
+                                    <br>- O cualquier otra duda
+                            </div>
+                        </div>
+
+                        <div class="chat-input">
+                            <input type="text" id="chat-input" placeholder="Escribe tu mensaje..." class="flex-grow border border-gray-300 rounded-full px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            <button id="send-button" class="w-10 h-10 rounded-full gradient-bg text-white flex items-center justify-center">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pricing Section -->
+    <section id="pricing" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Planes a medida para tu negocio</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Elige el plan que mejor se adapte a tus necesidades y escala cuando lo necesites.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                <!-- Basic Plan -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="p-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Básico</h3>
+                        <p class="text-gray-600 mb-6">Ideal para pequeñas empresas</p>
+                        <div class="mb-6">
+                            <span class="text-4xl font-bold text-gray-800">$99</span>
+                            <span class="text-gray-600">/mes</span>
+                        </div>
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0 mt-1">
+                                    <div class="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center">
+                                        <i class="fas fa-check text-green-600 text-xs"></i>
+                                    </div>
+                                </div>
+                                <span class="ml-3 text-gray-700">1,000 mensajes/mes</span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0 mt-1">
+                                    <div class="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center">
+                                        <i class="fas fa-check text-green-600 text-xs"></i>
+                                    </div>
+                                </div>
+                                <span class="ml-3 text-gray-700">WhatsApp integrado</span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0 mt-1">
+                                    <div class="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center">
+                                        <i class="fas fa-check text-green-600 text-xs"></i>
+                                    </div>
+                                </div>
+                                <span class="ml-3 text-gray-700">Soporte básico</span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0 mt-1">
+                                    <div class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center">
+                                        <i class="fas fa-times text-gray-400 text-xs"></i>
+                                    </div>
+                                </div>
+                                <span class="ml-3 text-gray-400">IA avanzada</span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0 mt-1">
+                                    <div class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center">
+                                        <i class="fas fa-times text-gray-400 text-xs"></i>
+                                    </div>
+                                </div>
+                                <span class="ml-3 text-gray-400">Multiplataforma</span>
+                            </li>
+                        </ul>
+                        <a href="#contact" class="block w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg text-center transition duration-300">Consultar</a>
+                    </div>
+                </div>
+
+                <!-- Pro Plan (Featured) -->
+                <div class="bg-white rounded-xl shadow-lg overflow-hidden border-2 border-blue-500 transform scale-105">
+                    <div class="bg-blue-500 text-white text-center py-2">
+                        <span class="font-bold">MÁS POPULAR</span>
+                    </div>
+                    <div class="p-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Profesional</h3>
+                        <p class="text-gray-600 mb-6">Para empresas en crecimiento</p>
+                        <div class="mb-6">
+                            <span class="text-4xl font-bold text-gray-800">$299</span>
+                            <span class="text-gray-600">/mes</span>
+                        </div>
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0 mt-1">
+                                    <div class="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center">
+                                        <i class="fas fa-check text-green-600 text-xs"></i>
+                                    </div>
+                                </div>
+                                <span class="ml-3 text-gray-700">5,000 mensajes/mes</span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0 mt-1">
+                                    <div class="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center">
+                                        <i class="fas fa-check text-green-600 text-xs"></i>
+                                    </div>
+                                </div>
+                                <span class="ml-3 text-gray-700">WhatsApp + Messenger</span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0 mt-1">
+                                    <div class="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center">
+                                        <i class="fas fa-check text-green-600 text-xs"></i>
+                                    </div>
+                                </div>
+                                <span class="ml-3 text-gray-700">Soporte prioritario</span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0 mt-1">
+                                    <div class="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center">
+                                        <i class="fas fa-check text-green-600 text-xs"></i>
+                                    </div>
+                                </div>
+                                <span class="ml-3 text-gray-700">IA básica</span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0 mt-1">
+                                    <div class="w-5 h-5 rounded-full bg-gray-100 flex items-center justify-center">
+                                        <i class="fas fa-times text-gray-400 text-xs"></i>
+                                    </div>
+                                </div>
+                                <span class="ml-3 text-gray-400">Multiplataforma completa</span>
+                            </li>
+                        </ul>
+                        <a href="#contact" class="block w-full gradient-bg hover:opacity-90 text-white font-bold py-3 px-4 rounded-lg text-center transition duration-300">Probar gratis</a>
+                    </div>
+                </div>
+
+                <!-- Enterprise Plan -->
+                <div class="bg-white rounded-xl shadow-md overflow-hidden">
+                    <div class="p-8">
+                        <h3 class="text-2xl font-bold text-gray-800 mb-2">Empresarial</h3>
+                        <p class="text-gray-600 mb-6">Para grandes organizaciones</p>
+                        <div class="mb-6">
+                            <span class="text-4xl font-bold text-gray-800">$899</span>
+                            <span class="text-gray-600">/mes</span>
+                        </div>
+                        <ul class="space-y-3 mb-8">
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0 mt-1">
+                                    <div class="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center">
+                                        <i class="fas fa-check text-green-600 text-xs"></i>
+                                    </div>
+                                </div>
+                                <span class="ml-3 text-gray-700">20,000 mensajes/mes</span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0 mt-1">
+                                    <div class="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center">
+                                        <i class="fas fa-check text-green-600 text-xs"></i>
+                                    </div>
+                                </div>
+                                <span class="ml-3 text-gray-700">Todas las plataformas</span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0 mt-1">
+                                    <div class="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center">
+                                        <i class="fas fa-check text-green-600 text-xs"></i>
+                                    </div>
+                                </div>
+                                <span class="ml-3 text-gray-700">Soporte 24/7</span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0 mt-1">
+                                    <div class="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center">
+                                        <i class="fas fa-check text-green-600 text-xs"></i>
+                                    </div>
+                                </div>
+                                <span class="ml-3 text-gray-700">IA avanzada</span>
+                            </li>
+                            <li class="flex items-start">
+                                <div class="flex-shrink-0 mt-1">
+                                    <div class="w-5 h-5 rounded-full bg-green-100 flex items-center justify-center">
+                                        <i class="fas fa-check text-green-600 text-xs"></i>
+                                    </div>
+                                </div>
+                                <span class="ml-3 text-gray-700">Integración CRM</span>
+                            </li>
+                        </ul>
+                        <a href="#contact" class="block w-full bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold py-3 px-4 rounded-lg text-center transition duration-300">Contactar ventas</a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-12 text-center">
+                <p class="text-gray-600 mb-4">¿Necesitas un plan personalizado?</p>
+                <a href="#contact" class="inline-block border-2 border-blue-500 text-blue-500 hover:bg-blue-500 hover:text-white font-bold py-2 px-6 rounded-full transition duration-300">Solicitar cotización</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Lo que dicen nuestros clientes</h2>
+                <p class="text-xl text-gray-600 max-w-3xl mx-auto">Empresas y municipalidades que han transformado su atención al cliente con Cognibot.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Testimonial 1 -->
+                <div class="bg-gray-50 p-8 rounded-xl">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-xl font-bold mr-4">M</div>
+                        <div>
+                            <h4 class="font-bold text-gray-800">Municipalidad de San José</h4>
+                            <p class="text-sm text-gray-600">Gobierno local</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 mb-4">"Cognibot nos ha permitido atender las consultas de nuestros ciudadanos de manera eficiente, reduciendo nuestros tiempos de respuesta de días a minutos."</p>
+                    <div class="flex">
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                    </div>
+                </div>
+
+                <!-- Testimonial 2 -->
+                <div class="bg-gray-50 p-8 rounded-xl">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-green-600 text-xl font-bold mr-4">T</div>
+                        <div>
+                            <h4 class="font-bold text-gray-800">Tienda Online</h4>
+                            <p class="text-sm text-gray-600">Comercio electrónico</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 mb-4">"Desde que implementamos Cognibot, hemos reducido en un 70% las consultas que requieren intervención humana. Nuestros clientes están más satisfechos con las respuestas instantáneas."</p>
+                    <div class="flex">
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                    </div>
+                </div>
+
+                <!-- Testimonial 3 -->
+                <div class="bg-gray-50 p-8 rounded-xl">
+                    <div class="flex items-center mb-4">
+                        <div class="w-12 h-12 rounded-full bg-purple-100 flex items-center justify-center text-purple-600 text-xl font-bold mr-4">C</div>
+                        <div>
+                            <h4 class="font-bold text-gray-800">Clínica Dental</h4>
+                            <p class="text-sm text-gray-600">Sector salud</p>
+                        </div>
+                    </div>
+                    <p class="text-gray-700 mb-4">"El chatbot ha automatizado nuestro proceso de agendamiento de citas, permitiendo que nuestro personal se enfoque en la atención al paciente en lugar de en llamadas telefónicas."</p>
+                    <div class="flex">
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star text-yellow-400"></i>
+                        <i class="fas fa-star-half-alt text-yellow-400"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden">
+                <div class="md:flex">
+                    <div class="md:w-1/2 gradient-bg text-white p-8 md:p-12">
+                        <h2 class="text-3xl font-bold mb-6">Contáctanos</h2>
+                        <p class="mb-8">¿Listo para transformar la comunicación de tu empresa? Completa el formulario y nos pondremos en contacto contigo en menos de 24 horas.</p>
+
+                        <div class="space-y-6">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 mt-1">
+                                    <i class="fas fa-envelope text-white"></i>
+                                </div>
+                                <span class="ml-3">contacto@Cognibot.com</span>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 mt-1">
+                                    <i class="fas fa-phone-alt text-white"></i>
+                                </div>
+                                <span class="ml-3">+54 (911) 2693-9360</span>
+                            </div>
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0 mt-1">
+                                    <i class="fas fa-map-marker-alt text-white"></i>
+                                </div>
+                                <span class="ml-3">Av. Principal 123, San Francisco, CA</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="md:w-1/2 p-8 md:p-12">
+                        <form id="contact-form" class="space-y-6">
+                            <div>
+                                <label for="name" class="block text-gray-700 font-medium mb-2">Nombre completo</label>
+                                <input type="text" id="name" name="name" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+
+                            <div>
+                                <label for="email" class="block text-gray-700 font-medium mb-2">Correo electrónico</label>
+                                <input type="email" id="email" name="email" required class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+
+                            <div>
+                                <label for="company" class="block text-gray-700 font-medium mb-2">Empresa</label>
+                                <input type="text" id="company" name="company" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                            </div>
+
+                            <div>
+                                <label for="interest" class="block text-gray-700 font-medium mb-2">¿Qué te interesa?</label>
+                                <select id="interest" name="interest" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                                    <option value="demo">Probar demo</option>
+                                    <option value="pricing">Consultar precios</option>
+                                    <option value="enterprise">Solución empresarial</option>
+                                    <option value="other">Otro</option>
+                                </select>
+                            </div>
+
+                            <div>
+                                <label for="message" class="block text-gray-700 font-medium mb-2">Mensaje</label>
+                                <textarea id="message" name="message" rows="4" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                            </div>
+
+                            <button type="submit" class="w-full gradient-bg hover:opacity-90 text-white font-bold py-3 px-4 rounded-lg transition duration-300">Enviar mensaje</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4 max-w-4xl">
+            <div class="text-center mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-gray-800 mb-4">Preguntas frecuentes</h2>
+                <p class="text-xl text-gray-600">Resuelve tus dudas sobre Cognibot</p>
+            </div>
+
+            <div class="space-y-4">
+                <!-- FAQ Item 1 -->
+                <div class="border border-gray-200 rounded-xl overflow-hidden">
+                    <button class="faq-toggle w-full flex justify-between items-center p-6 text-left hover:bg-gray-50 focus:outline-none">
+                        <span class="text-lg font-medium text-gray-800">¿Qué plataformas de mensajería soporta Botmaker?</span>
+                        <i class="fas fa-chevron-down text-blue-600 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-content hidden px-6 pb-6 pt-0">
+                        <p class="text-gray-600">Cognibot soporta integración nativa con WhatsApp Business, Facebook Messenger e Instagram Direct. También ofrecemos API para conectar con otras plataformas de mensajería según tus necesidades.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 2 -->
+                <div class="border border-gray-200 rounded-xl overflow-hidden">
+                    <button class="faq-toggle w-full flex justify-between items-center p-6 text-left hover:bg-gray-50 focus:outline-none">
+                        <span class="text-lg font-medium text-gray-800">¿Cómo se integra el chatbot con mis sistemas existentes?</span>
+                        <i class="fas fa-chevron-down text-blue-600 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-content hidden px-6 pb-6 pt-0">
+                        <p class="text-gray-600">Cognibot ofrece integración con los principales CRMs (Salesforce, HubSpot, Zoho), sistemas de tickets y bases de datos a través de API REST. Nuestro equipo de implementación te ayudará a configurar las conexiones necesarias según
+                            tus requerimientos.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 3 -->
+                <div class="border border-gray-200 rounded-xl overflow-hidden">
+                    <button class="faq-toggle w-full flex justify-between items-center p-6 text-left hover:bg-gray-50 focus:outline-none">
+                        <span class="text-lg font-medium text-gray-800">¿Qué nivel de personalización tienen los chatbots?</span>
+                        <i class="fas fa-chevron-down text-blue-600 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-content hidden px-6 pb-6 pt-0">
+                        <p class="text-gray-600">Ofrecemos tres niveles de personalización: plantillas preconfiguradas para implementación rápida, personalización de flujos de conversación según tus procesos, y desarrollo de chatbots completamente personalizados con IA específica
+                            para tu industria.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 4 -->
+                <div class="border border-gray-200 rounded-xl overflow-hidden">
+                    <button class="faq-toggle w-full flex justify-between items-center p-6 text-left hover:bg-gray-50 focus:outline-none">
+                        <span class="text-lg font-medium text-gray-800">¿Hay límite en la cantidad de conversaciones que puede manejar?</span>
+                        <i class="fas fa-chevron-down text-blue-600 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-content hidden px-6 pb-6 pt-0">
+                        <p class="text-gray-600">Nuestra infraestructura en la nube está diseñada para escalar automáticamente según la demanda. Los planes estándar tienen límites de mensajes mensuales, pero podemos ofrecer soluciones empresariales sin límites para organizaciones
+                            con alto volumen de conversaciones.</p>
+                    </div>
+                </div>
+
+                <!-- FAQ Item 5 -->
+                <div class="border border-gray-200 rounded-xl overflow-hidden">
+                    <button class="faq-toggle w-full flex justify-between items-center p-6 text-left hover:bg-gray-50 focus:outline-none">
+                        <span class="text-lg font-medium text-gray-800">¿Cómo manejan la seguridad y privacidad de los datos?</span>
+                        <i class="fas fa-chevron-down text-blue-600 transition-transform duration-300"></i>
+                    </button>
+                    <div class="faq-content hidden px-6 pb-6 pt-0">
+                        <p class="text-gray-600">Implementamos encriptación de extremo a extremo, cumplimos con GDPR y otras regulaciones de privacidad, y ofrecemos opciones de alojamiento en regiones específicas según tus necesidades. Todos los datos se procesan con los más
+                            altos estándares de seguridad.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-16 gradient-bg text-white">
+        <div class="container mx-auto px-4 text-center">
+            <h2 class="text-3xl md:text-4xl font-bold mb-6">¿Listo para transformar la comunicación de tu empresa?</h2>
+            <p class="text-xl mb-8 max-w-2xl mx-auto">Comienza hoy mismo con Cognibot y lleva la atención al cliente al siguiente nivel.</p>
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
+                <a href="#demo" class="bg-white text-blue-600 hover:bg-gray-100 font-bold py-3 px-8 rounded-full transition duration-300">Probar demo gratis</a>
+                <a href="#contact" class="bg-transparent border-2 border-white hover:bg-white hover:text-blue-600 font-bold py-3 px-8 rounded-full transition duration-300">Hablar con un experto</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="bg-gray-900 text-white py-12">
+        <div class="container mx-auto px-4">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <!-- Column 1 -->
+                <div>
+                    <div class="flex items-center mb-4">
+                        <div class="w-10 h-10 rounded-full gradient-bg flex items-center justify-center text-white font-bold text-xl mr-2">
+                            BM
+                        </div>
+                        <span class="text-xl font-bold">Cognibot</span>
+                    </div>
+                    <p class="text-gray-400 mb-4">Soluciones de chatbots inteligentes para transformar la comunicación de tu empresa.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-twitter"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-linkedin-in"></i></a>
+                        <a href="#" class="text-gray-400 hover:text-white"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+
+                <!-- Column 2 -->
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Producto</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#features" class="text-gray-400 hover:text-white">Funciones</a></li>
+                        <li><a href="#pricing" class="text-gray-400 hover:text-white">Precios</a></li>
+                        <li><a href="#demo" class="text-gray-400 hover:text-white">Demo</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Integraciones</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Actualizaciones</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 3 -->
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Recursos</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Documentación</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Guías</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Blog</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Webinars</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Centro de ayuda</a></li>
+                    </ul>
+                </div>
+
+                <!-- Column 4 -->
+                <div>
+                    <h3 class="text-lg font-bold mb-4">Empresa</h3>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-400 hover:text-white">Nosotros</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Carreras</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Socios</a></li>
+                        <li><a href="#" class="text-gray-400 hover:text-white">Legal</a></li>
+                        <li><a href="#contact" class="text-gray-400 hover:text-white">Contacto</a></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                <p class="text-gray-400 mb-4 md:mb-0">© 2025 Cognibot. Todos los derechos reservados.</p>
+                <div class="flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-white">Términos de servicio</a>
+                    <a href="#" class="text-gray-400 hover:text-white">Política de privacidad</a>
+                    <a href="#" class="text-gray-400 hover:text-white">Cookies</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('hidden');
+        });
+
+        // FAQ toggle functionality
+        document.querySelectorAll('.faq-toggle').forEach(button => {
+            button.addEventListener('click', () => {
+                const faqItem = button.parentElement;
+                const content = faqItem.querySelector('.faq-content');
+                const icon = button.querySelector('i');
+
+                content.classList.toggle('hidden');
+                icon.classList.toggle('rotate-180');
+            });
+        });
+
+        // Simple chatbot simulation
+        document.getElementById('send-button').addEventListener('click', sendMessage);
+        document.getElementById('chat-input').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const message = input.value.trim();
+
+            if (message) {
+                // Add user message
+                const chatBody = document.getElementById('chat-body');
+                const userMessage = document.createElement('div');
+                userMessage.className = 'message user-message';
+                userMessage.textContent = message;
+                chatBody.appendChild(userMessage);
+
+                // Clear input
+                input.value = '';
+
+                // Simulate bot response after a delay
+                setTimeout(() => {
+                    const botMessages = [
+                        "Entiendo tu consulta sobre Cognibot. ¿Te gustaría que te explique más sobre nuestras funciones de IA?",
+                        "Gracias por tu mensaje. Puedo ayudarte con información sobre precios, integraciones o demostraciones.",
+                        "Interesante pregunta. Nuestros chatbots pueden aprender de conversaciones anteriores para mejorar sus respuestas.",
+                        "¿Te gustaría agendar una demostración personalizada con uno de nuestros especialistas?",
+                        "Para más detalles, puedes visitar nuestra sección de precios o contactar a nuestro equipo de ventas."
+                    ];
+
+                    const randomResponse = botMessages[Math.floor(Math.random() * botMessages.length)];
+                    const botMessage = document.createElement('div');
+                    botMessage.className = 'message bot-message';
+                    botMessage.textContent = randomResponse;
+                    chatBody.appendChild(botMessage);
+
+                    // Scroll to bottom
+                    chatBody.scrollTop = chatBody.scrollHeight;
+                }, 1000);
+
+                // Scroll to bottom
+                chatBody.scrollTop = chatBody.scrollHeight;
+            }
+        }
+
+        // Form submission
+        document.getElementById('contact-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Here you would typically send the form data to your backend
+            // For this example, we'll just show an alert
+            alert('¡Gracias por tu mensaje! Nos pondremos en contacto contigo pronto.');
+            this.reset();
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+
+                    // Close mobile menu if open
+                    const mobileMenu = document.getElementById('mobile-menu');
+                    if (!mobileMenu.classList.contains('hidden')) {
+                        mobileMenu.classList.add('hidden');
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

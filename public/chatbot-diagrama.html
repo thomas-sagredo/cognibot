@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Diseñador de Chatbot - Editor de Flujo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+        html,
+        body {
+            height: 100%;
+        }
+        
+        body {
+            overflow: hidden;
+        }
+        
+        .node {
+            user-select: none;
+            cursor: grab;
+            touch-action: none;
+            will-change: left, top;
+        }
+        
+        .node.dragging {
+            opacity: .9;
+            cursor: grabbing;
+        }
+        
+        .port {
+            width: 12px;
+            height: 12px;
+            border-radius: 9999px;
+        }
+        
+        .port.in {
+            border: 2px solid #3B82F6;
+        }
+        
+        .port.out {
+            background: #3B82F6;
+        }
+        
+        .toolbar-btn {
+            transition: transform .08s ease;
+        }
+        
+        .toolbar-btn:active {
+            transform: translateY(1px) scale(0.99);
+        }
+        
+        .mini-badge {
+            font-size: 10px;
+        }
+        
+        .wa-input {
+            font-size: 12px;
+        }
+        
+        #world {
+            transform-origin: 0 0;
+        }
+        
+        .noselect {
+            -webkit-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        
+        .marquee {
+            position: absolute;
+            border: 1px dashed #6366f1;
+            background: rgba(99, 102, 241, .08);
+            pointer-events: none;
+        }
+        
+        .add-handle {
+            position: absolute;
+            left: 50%;
+            transform: translate(-50%, 8px);
+            bottom: -18px;
+        }
+        
+        .ctx {
+            position: absolute;
+            z-index: 60;
+            min-width: 260px;
+        }
+        
+        .ctx .dot {
+            width: 9px;
+            height: 9px;
+            border-radius: 9999px;
+            display: inline-block;
+            margin-right: .5rem;
+        }
+        
+        .submenu {
+            position: absolute;
+            left: 100%;
+            top: 0;
+            margin-left: .5rem;
+        }
+    </style>
+</head>
+
+<body class="font-['Inter'] bg-gray-50 min-h-screen">
+    <div class="flex flex-col h-screen">
+        <header class="border-b bg-white/70 backdrop-blur sticky top-0 z-10">
+            <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <h1 class="text-2xl font-bold text-indigo-700">Diseñador de Chatbot</h1>
+                    <span class="text-xs text-gray-500">v1.7 – Snap al soltar + selección múltiple + multi‑conexión + pan/zoom</span>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button id="btnValidate" class="toolbar-btn bg-white border hover:bg-gray-50 text-gray-700 px-3 py-2 rounded-lg flex items-center gap-2"><i data-feather="check-circle"></i><span>Validar</span></button>
+                    <button id="btnSave" class="toolbar-btn bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-2 rounded-lg flex items-center gap-2"><i data-feather="save"></i><span>Exportar JSON</span></button>
+                    <label class="toolbar-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-2 rounded-lg flex items-center gap-2 cursor-pointer">
+            <i data-feather="upload"></i><span>Importar</span>
+            <input id="fileImport" type="file" accept="application/json" class="hidden" />
+          </label>
+                    <button id="btnConnect" class="toolbar-btn bg-white border hover:bg-gray-50 text-gray-700 px-3 py-2 rounded-lg flex items-center gap-2"><i data-feather="link-2"></i><span>Conectar</span></button>
+                    <button id="btnDelete" class="toolbar-btn bg-white border hover:bg-gray-50 text-gray-700 px-3 py-2 rounded-lg flex items-center gap-2"><i data-feather="x-circle"></i><span>Eliminar</span></button>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main workspace -->
+        <div class="container mx-auto flex-1 px-4 py-4 grid grid-cols-12 gap-4">
+            <!-- Palette / Controls -->
+            <aside class="col-span-12 lg:col-span-3 bg-white rounded-xl shadow p-4 h-fit">
+                <h2 class="text-lg font-semibold text-gray-800 mb-3">Bloques</h2>
+                <div class="grid grid-cols-2 gap-2">
+                    <button id="btnTogglePreview" class="toolbar-btn bg-white border hover:bg-gray-50 text-gray-700 px-3 py-2 rounded-lg flex items-center gap-2" title="Mostrar/Ocultar vista previa"><i data-feather="smartphone"></i><span>Vista previa</span></button>
+                    <button data-type="start" class="toolbar-btn bg-green-100 hover:bg-green-200 text-green-800 px-3 py-2 rounded-lg flex items-center gap-2"><i data-feather="power"></i><span class="text-sm">Inicio</span></button>
+                    <button data-type="message" class="toolbar-btn bg-blue-100 hover:bg-blue-200 text-blue-800 px-3 py-2 rounded-lg flex items-center gap-2"><i data-feather="message-square"></i><span class="text-sm">Mensaje</span></button>
+                    <button data-type="menu" class="toolbar-btn bg-purple-100 hover:bg-purple-200 text-purple-800 px-3 py-2 rounded-lg flex items-center gap-2"><i data-feather="list"></i><span class="text-sm">Menú</span></button>
+                    <button data-type="decision" class="toolbar-btn bg-yellow-100 hover:bg-yellow-200 text-yellow-800 px-3 py-2 rounded-lg flex items-center gap-2"><i data-feather="git-branch"></i><span class="text-sm">Decisión</span></button>
+                    <button data-type="agent" class="toolbar-btn bg-red-100 hover:bg-red-200 text-red-800 px-3 py-2 rounded-lg flex items-center gap-2"><i data-feather="user"></i><span class="text-sm">Agente</span></button>
+                    <button data-type="ad" class="toolbar-btn bg-pink-100 hover:bg-pink-200 text-pink-800 px-3 py-2 rounded-lg flex items-center gap-2"><i data-feather="image"></i><span class="text-sm">Publicidad</span></button>
+                    <button data-type="data" class="toolbar-btn bg-indigo-100 hover:bg-indigo-200 text-indigo-800 px-3 py-2 rounded-lg flex items-center gap-2"><i data-feather="database"></i><span class="text-sm">Datos</span></button>
+                    <button data-type="end" class="toolbar-btn bg-gray-100 hover:bg-gray-200 text-gray-800 px-3 py-2 rounded-lg flex items-center gap-2"><i data-feather="flag"></i><span class="text-sm">Finalizar</span></button>
+                </div>
+
+                <hr class="my-4" />
+
+                <h3 class="text-sm font-semibold text-gray-700 mb-2">Lienzo</h3>
+                <div class="flex flex-col gap-2">
+                    <label class="flex items-center gap-2 text-sm">
+            <input id="snapToggle" type="checkbox" class="accent-indigo-600" checked>
+            <span>Snap al soltar</span>
+          </label>
+                    <label class="flex items-center gap-2 text-sm">
+            Tamaño grilla (px)
+            <input id="gridSize" type="number" min="8" max="200" step="1" value="25" class="w-24 border rounded px-2 py-1" />
+          </label>
+                    <div class="flex gap-2">
+                        <button id="btnResetView" class="toolbar-btn bg-white border hover:bg-gray-50 text-gray-700 px-3 py-2 rounded-lg flex items-center gap-2"><i data-feather="crosshair"></i><span>Reset vista</span></button>
+                    </div>
+                    <p class="text-xs text-gray-500">Arrastre libre y al soltar ajusta a la grilla (si está activado).</p>
+                </div>
+
+                <p class="text-xs text-gray-500 mt-3">Shift+clic para selección múltiple • Arrastrar en fondo = marco de selección • Space+Arrastrar = Pan • Ctrl+Rueda = Zoom • Doble clic = editar contenido.</p>
+            </aside>
+
+            <!-- Canvas -->
+            <section class="col-span-12 lg:col-span-6 relative bg-white rounded-xl shadow overflow-hidden select-none">
+                <div id="canvas" class="relative h-[70vh] min-h-[540px]" style="background-image: linear-gradient(to right, rgba(0,0,0,.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(0,0,0,.05) 1px, transparent 1px); background-size: 25px 25px, 25px 25px;">
+                    <div id="world" class="absolute inset-0">
+                        <svg id="edges" class="absolute inset-0 w-full h-full pointer-events-none"></svg>
+                        <div id="nodes" class="absolute inset-0"></div>
+                        <div id="marquee" class="marquee hidden"></div>
+                    </div>
+                </div>
+                <div class="border-t p-2 text-xs text-gray-500 flex items-center justify-between">
+                    <div>Modo: <span id="modeLbl" class="font-semibold">Mover</span> • Zoom: <span id="zoomLbl">100%</span> • Seleccionados: <span id="selCount">0</span></div>
+                    <div id="status" class="truncate"></div>
+                </div>
+            </section>
+
+            <!-- WhatsApp Preview -->
+            <aside class="col-span-12 lg:col-span-3 bg-white rounded-xl shadow flex flex-col">
+                <div class="p-4 border-b flex items-center justify-between">
+                    <h2 class="text-lg font-semibold text-gray-800">Vista previa WhatsApp</h2>
+                    <button id="btnClosePreview" class="toolbar-btn text-gray-500 hover:text-gray-700" title="Ocultar">
+                        <i data-feather="x"></i>
+                        </button>
+                </div>
+                <div class="p-4 border-b">
+                    <h2 class="text-lg font-semibold text-gray-800">Vista previa WhatsApp</h2>
+                    <div class="mt-2 flex gap-2">
+                        <button id="waStart" class="toolbar-btn bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded">Iniciar</button>
+                        <button id="waStep" class="toolbar-btn bg-white border hover:bg-gray-50 text-gray-700 px-3 py-1.5 rounded">Paso</button>
+                        <button id="waReset" class="toolbar-btn bg-white border hover:bg-gray-50 text-gray-700 px-3 py-1.5 rounded">Reiniciar</button>
+                    </div>
+                </div>
+                <div class="flex-1 overflow-y-auto bg-[#efeae2]" id="waScroll">
+                    <div id="wa" class="p-3 space-y-2"></div>
+                </div>
+                <div class="p-3 border-t bg-[#f0f2f5]">
+                    <div id="waActions" class="flex flex-col gap-2 mb-2"></div>
+                    <div class="flex gap-2">
+                        <input id="waInput" class="flex-1 border rounded px-2 py-1 text-[13px]" placeholder="Escribí un número (1/2/3) o texto..." />
+                        <button id="waSend" class="bg-white border px-3 py-1 rounded text-sm">Enviar</button>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </div>
+
+    <script>
+        feather.replace();
+
+        // --- State ---
+        const state = {
+            nodes: [], // {id, type, x, y, data}
+            edges: [], // {id, from, to}
+            selectedNodeIds: new Set(),
+            selectedEdgeId: null,
+            mode: 'move', // 'move' | 'connect'
+            pendingFrom: null,
+            idCounter: 1,
+            pan: {
+                x: 0,
+                y: 0
+            },
+            zoom: 1,
+            isPanning: false,
+            spaceDown: false,
+            snap: true,
+            grid: 25,
+            preview: {
+                current: null,
+                variables: {}
+            }
+        };
+
+        const els = {
+            palette: document.querySelectorAll('aside [data-type]'),
+            nodesLayer: document.getElementById('nodes'),
+            edgesSvg: document.getElementById('edges'),
+            world: document.getElementById('world'),
+            modeLbl: document.getElementById('modeLbl'),
+            zoomLbl: document.getElementById('zoomLbl'),
+            selCount: document.getElementById('selCount'),
+            status: document.getElementById('status'),
+            btnConnect: document.getElementById('btnConnect'),
+            btnDelete: document.getElementById('btnDelete'),
+            btnSave: document.getElementById('btnSave'),
+            btnValidate: document.getElementById('btnValidate'),
+            fileImport: document.getElementById('fileImport'),
+            canvas: document.getElementById('canvas'),
+            btnResetView: document.getElementById('btnResetView'),
+            snapToggle: document.getElementById('snapToggle'),
+            gridSize: document.getElementById('gridSize'),
+            marquee: document.getElementById('marquee'),
+            // WA preview
+            wa: document.getElementById('wa'),
+            waActions: document.getElementById('waActions'),
+            waScroll: document.getElementById('waScroll'),
+            waStart: document.getElementById('waStart'),
+            waStep: document.getElementById('waStep'),
+            waReset: document.getElementById('waReset'),
+            waInput: document.getElementById('waInput'),
+            waSend: document.getElementById('waSend'),
+        };
+
+        // --- Helpers ---
+        const typeMeta = {
+            start: {
+                color: 'bg-green-500',
+                title: 'Inicio',
+                icon: 'power'
+            },
+            message: {
+                color: 'bg-blue-500',
+                title: 'Mensaje',
+                icon: 'message-square'
+            },
+            menu: {
+                color: 'bg-purple-500',
+                title: 'Menú',
+                icon: 'list'
+            },
+            decision: {
+                color: 'bg-yellow-500',
+                title: 'Decisión',
+                icon: 'git-branch'
+            },
+            agent: {
+                color: 'bg-red-500',
+                title: 'Agente',
+                icon: 'user'
+            },
+            ad: {
+                color: 'bg-pink-500',
+                title: 'Publicidad',
+                icon: 'image'
+            },
+            data: {
+                color: 'bg-indigo-500',
+                title: 'Datos',
+                icon: 'database'
+            },
+            end: {
+                color: 'bg-gray-600',
+                title: 'Finalización',
+                icon: 'flag'
+            },
+        };
+
+        function uid(prefix = 'id') {
+            return prefix + '_' + (state.idCounter++);
+        }
+
+        function setMode(m) {
+            state.mode = m;
+            els.modeLbl.textContent = m === 'move' ? 'Mover' : 'Conectar';
+            status('');
+            if (m === 'move') {
+                state.pendingFrom = null;
+                highlightPending(null);
+            }
+        }
+
+        function status(msg) {
+            els.status.textContent = msg || '';
+        }
+
+        function addNode(type, x = 80, y = 80) {
+            const id = uid('node');
+            const data = defaultDataFor(type);
+            state.nodes.push({
+                id,
+                type,
+                x,
+                y,
+                data
+            });
+            render();
+            saveLocal();
+            return id;
+        }
+
+        function defaultDataFor(type) {
+            switch (type) {
+                case 'start':
+                    return {
+                        subtitle: 'Conversación iniciada'
+                    };
+                case 'message':
+                    return {
+                        text: '"¡Hola {{Nombre}}! ¿En qué puedo ayudarte hoy?"'
+                    };
+                case 'menu':
+                    return {
+                        items: ['1. Información', '2. Contactar agente', '3. Promociones']
+                    };
+                case 'decision':
+                    return {
+                        label: 'Elección del usuario'
+                    };
+                case 'agent':
+                    return {
+                        text: '"Conectando con un agente..."'
+                    };
+                case 'ad':
+                    return {
+                        text: 'Imagen + texto promocional'
+                    };
+                case 'data':
+                    return {
+                        fields: ['Nombre', 'Teléfono', 'Preferencia']
+                    };
+                case 'end':
+                    return {
+                        text: '"Gracias por contactarnos"'
+                    };
+                default:
+                    return {};
+            }
+        }
+
+        function removeNode(id) {
+            state.nodes = state.nodes.filter(n => n.id !== id);
+            state.edges = state.edges.filter(e => e.from !== id && e.to !== id);
+            state.selectedNodeIds.delete(id);
+            if (state.selectedEdgeId && !state.edges.find(e => e.id === state.selectedEdgeId)) state.selectedEdgeId = null;
+            render();
+            saveLocal();
+        }
+
+        function addEdge(from, to) {
+            if (from === to) return;
+            if (!state.nodes.find(n => n.id === from) || !state.nodes.find(n => n.id === to)) return;
+            if (state.edges.find(e => e.from === from && e.to === to)) return; // evita duplicados
+            const id = uid('edge');
+            state.edges.push({
+                id,
+                from,
+                to
+            });
+            drawEdges();
+            saveLocal();
+        }
+
+        function removeEdge(id) {
+            state.edges = state.edges.filter(e => e.id !== id);
+            if (state.selectedEdgeId === id) state.selectedEdgeId = null;
+            drawEdges();
+            saveLocal();
+        }
+
+        function nodeEl(n) {
+            return document.querySelector(`[data-node-id="${n.id}"]`);
+        }
+
+        // --- Selection helpers ---
+        function setSelection(ids) {
+            state.selectedNodeIds = new Set(ids);
+            els.selCount.textContent = state.selectedNodeIds.size;
+            render();
+        }
+
+        function toggleSelection(id) {
+            if (state.selectedNodeIds.has(id)) state.selectedNodeIds.delete(id);
+            else state.selectedNodeIds.add(id);
+            els.selCount.textContent = state.selectedNodeIds.size;
+            render();
+        }
+
+        function clearSelection() {
+            state.selectedNodeIds.clear();
+            els.selCount.textContent = 0;
+            render();
+        }
+
+        // --- Pan & Zoom ---
+        function applyTransform() {
+            els.world.style.transform = `translate(${state.pan.x}px, ${state.pan.y}px) scale(${state.zoom})`;
+            els.zoomLbl.textContent = Math.round(state.zoom * 100) + '%';
+            drawEdges();
+        }
+
+        els.canvas.addEventListener('wheel', (e) => {
+            if (!e.ctrlKey) return;
+            e.preventDefault();
+            const rect = els.canvas.getBoundingClientRect();
+            const mx = e.clientX - rect.left;
+            const my = e.clientY - rect.top;
+            const prevZ = state.zoom;
+            const delta = -e.deltaY;
+            const factor = Math.exp(delta * 0.001);
+            state.zoom = Math.min(2.5, Math.max(0.4, prevZ * factor));
+            const scale = state.zoom / prevZ;
+            state.pan.x = mx - scale * (mx - state.pan.x);
+            state.pan.y = my - scale * (my - state.pan.y);
+            applyTransform();
+            saveLocal();
+        }, {
+            passive: false
+        });
+
+        window.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                state.spaceDown = true;
+                els.canvas.classList.add('noselect');
+            }
+        });
+        window.addEventListener('keyup', (e) => {
+            if (e.code === 'Space') {
+                state.spaceDown = false;
+                els.canvas.classList.remove('noselect');
+                state.isPanning = false;
+            }
+        });
+
+        let panStart = {
+                x: 0,
+                y: 0
+            },
+            panMouseStart = {
+                x: 0,
+                y: 0
+            };
+        els.canvas.addEventListener('mousedown', (e) => {
+            if (state.spaceDown || e.target.id === 'canvas' || e.target.id === 'world' || e.target.id === 'edges') {
+                state.isPanning = true;
+                panStart = {...state.pan
+                };
+                panMouseStart = {
+                    x: e.clientX,
+                    y: e.clientY
+                };
+            }
+        });
+        window.addEventListener('mousemove', (e) => {
+            if (!state.isPanning) return;
+            state.pan.x = panStart.x + (e.clientX - panMouseStart.x);
+            state.pan.y = panStart.y + (e.clientY - panMouseStart.y);
+            applyTransform();
+            saveLocal();
+        });
+        window.addEventListener('mouseup', () => {
+            state.isPanning = false;
+        });
+
+        els.btnResetView.addEventListener('click', () => {
+            state.pan = {
+                x: 0,
+                y: 0
+            };
+            state.zoom = 1;
+            applyTransform();
+            saveLocal();
+        });
+
+        // --- Grid helpers ---
+        function applyGridBackground() {
+            const g = state.grid;
+            els.canvas.style.backgroundSize = `${g}px ${g}px, ${g}px ${g}px`;
+        }
+
+        // --- Rendering ---
+        function render() {
+            els.nodesLayer.innerHTML = '';
+            for (const n of state.nodes) {
+                const meta = typeMeta[n.type] || typeMeta.message;
+                const wrapper = document.createElement('div');
+                wrapper.className = `node absolute ${state.selectedNodeIds.has(n.id)?'ring-2 ring-indigo-400':''}`;
+                wrapper.style.left = n.x + 'px';
+                wrapper.style.top = n.y + 'px';
+                wrapper.dataset.nodeId = n.id;
+                wrapper.innerHTML = _nodeInner(n, meta);
+                attachNodeEvents(wrapper, n);
+                els.nodesLayer.appendChild(wrapper);
+            }
+            feather.replace();
+            drawEdges();
+        }
+
+        function _nodeInner(n, meta) {
+            const base = `rounded-lg shadow p-3 w-64 text-left text-white ${meta.color}`;
+            const title = `<div class=\"flex items-center justify-between mb-1\">
+          <div class=\"flex items-center gap-2\">
+            <i data-feather=\"${meta.icon}\" class=\"w-4 h-4\"></i>
+            <h3 class=\"font-semibold text-sm\">${meta.title}</h3>
+          </div>
+          <span class=\"mini-badge bg-black/20 px-2 py-0.5 rounded text-[10px]\">${n.type}</span>
+        </div>`;
+
+            let content = '';
+            switch (n.type) {
+                case 'start':
+                    content = `<p class=\"text-xs opacity-90\">${n.data.subtitle}</p>`;
+                    break;
+                case 'message':
+                    content = `<p class=\"text-xs opacity-90\">${n.data.text}</p>`;
+                    break;
+                case 'menu':
+                    content = `<ul class=\"text-xs bg-white/20 rounded p-2\">${(n.data.items||[]).map(i=>`<li>${i}</li>`).join('')}</ul>`; break;
+        case 'decision': content = `<p class=\"text-xs\">${n.data.label}</p>`; break;
+        case 'agent': content = `<p class=\"text-xs opacity-90\">${n.data.text}</p>`; break;
+        case 'ad': content = `<p class=\"text-xs opacity-90\">${n.data.text}</p>`; break;
+        case 'data': content = `<ul class=\"text-xs bg-white/20 rounded p-2\">${(n.data.fields||[]).map(f=>`<li>${f}: [variable]</li>`).join('')}</ul>`; break;
+        case 'end': content = `<p class=\"text-xs opacity-90\">${n.data.text}</p>`; break;
+      }
+
+      const ports = `<div class=\"mt-2 flex items-center justify-between\">
+          <div class=\"port in rounded-full\" title=\"Entrada\" style=\"border-color:#3B82F6\"></div>
+          <div class=\"port out\" title=\"Salida\"></div>
+        </div>`;
+
+      return `<div class=\"${base}\">${title}${content}${ports}</div>`;
+    }
+
+    function attachNodeEvents(el, node){
+      // Selección (click / shift+click)
+      el.addEventListener('click', (ev)=>{
+        if(state.mode==='connect'){
+          if(state.pendingFrom && state.pendingFrom!==node.id){ addEdge(state.pendingFrom, node.id); state.pendingFrom=null; highlightPending(null); status('Conexión creada'); }
+          else { state.pendingFrom=node.id; highlightPending(node.id); status('Elegí el destino…'); }
+          return;
+        }
+        if(ev.shiftKey){ toggleSelection(node.id); }
+        else { setSelection([node.id]); }
+      });
+
+      // Doble click: editar
+      el.addEventListener('dblclick', ()=>{ editNodeData(node); });
+
+      // Drag group/single
+      el.addEventListener('pointerdown', (ev)=>{
+        if(state.mode!=='move') return; ev.preventDefault(); el.setPointerCapture(ev.pointerId);
+        // Si no estaba seleccionado, seleccionar solo este
+        if(!state.selectedNodeIds.has(node.id) && !ev.shiftKey){ setSelection([node.id]); }
+        const startP = {x: ev.clientX, y: ev.clientY};
+        const startPos = new Map();
+        state.selectedNodeIds.forEach(id=>{ const n=nodeById(id); startPos.set(id, {x:n.x, y:n.y}); });
+        el.classList.add('dragging');
+        const move = (e)=>{
+          const dx = (e.clientX - startP.x) / state.zoom;
+          const dy = (e.clientY - startP.y) / state.zoom;
+          state.selectedNodeIds.forEach(id=>{
+            const st = startPos.get(id); const n = nodeById(id);
+            let nx = st.x + dx, ny = st.y + dy; // libre durante el arrastre
+            n.x = nx; n.y = ny;
+            const elN = nodeEl(n); if(elN){ elN.style.left = n.x + 'px'; elN.style.top = n.y + 'px'; }
+          });
+          if(!move._raf){ move._raf = requestAnimationFrame(()=>{ drawEdges(); move._raf=null; }); }
+        };
+        const up = ()=>{
+          el.classList.remove('dragging'); el.releasePointerCapture(ev.pointerId);
+          window.removeEventListener('pointermove', move); window.removeEventListener('pointerup', up);
+          // Snap magnético SOLO al soltar
+          if(state.snap){
+            state.selectedNodeIds.forEach(id=>{ const n=nodeById(id); n.x = Math.round(n.x/state.grid)*state.grid; n.y = Math.round(n.y/state.grid)*state.grid; const elN=nodeEl(n); if(elN){ elN.style.left=n.x+'px'; elN.style.top=n.y+'px'; } });
+            drawEdges();
+          }
+          saveLocal();
+        };
+        window.addEventListener('pointermove', move);
+        window.addEventListener('pointerup', up);
+      });
+        el.querySelector('[data-add-handle]').addEventListener('click', (e)=>{
+            e.stopPropagation();
+            openAddMenuForNode(node, e.currentTarget);
+      });
+    }
+
+    function highlightPending(id){ document.querySelectorAll('[data-node-id]').forEach(n=>{ if(n.dataset.nodeId===String(id)) n.classList.add('ring-2','ring-yellow-400'); else n.classList.remove('ring-2','ring-yellow-400'); }); }
+
+    // --- Edges ---
+    function nodePortPoint(node, kind){
+      const el = nodeEl(node);
+      if(!el) return { x: node.x, y: node.y };
+      const svgRect = els.edgesSvg.getBoundingClientRect();
+      const rect = el.getBoundingClientRect();
+      const cx = rect.left - svgRect.left + rect.width/2;
+      const top = rect.top - svgRect.top;
+      const bottom = rect.bottom - svgRect.top;
+      if(kind==='out') return { x: cx, y: bottom };
+      return { x: cx, y: top };
+    }
+
+    function drawEdges(){
+      els.edgesSvg.innerHTML = '';
+      for(const e of state.edges){
+        const from = state.nodes.find(n=>n.id===e.from);
+        const to   = state.nodes.find(n=>n.id===e.to);
+        if(!from||!to) continue;
+        const p1 = nodePortPoint(from,'out');
+        const p2 = nodePortPoint(to,'in');
+        const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+        const dx = Math.max(40, Math.abs(p2.x - p1.x)/2);
+        const d = `M ${p1.x} ${p1.y} C ${p1.x} ${p1.y+dx}, ${p2.x} ${p2.y-dx}, ${p2.x} ${p2.y}`; // smooth cubic
+        path.setAttribute('d', d);
+        path.setAttribute('fill','none');
+        path.setAttribute('stroke', state.selectedEdgeId===e.id ? '#6366f1' : '#3b82f6');
+        path.setAttribute('stroke-width', state.selectedEdgeId===e.id ? '3' : '2');
+        path.dataset.edgeId = e.id; path.style.cursor = 'pointer';
+        path.addEventListener('click', ()=>{ state.selectedEdgeId = e.id; render(); });
+        els.edgesSvg.appendChild(path);
+      }
+    }
+
+    // --- Editing ---
+    function editNodeData(node){
+      switch(node.type){
+        case 'message': {
+          const v = prompt('Texto del mensaje (usa {{Variable}} si querés):', node.data.text || '');
+          if(v!=null){ node.data.text = v; render(); saveLocal(); }
+          break;
+        }
+        case 'menu': {
+          const v = prompt('Ítems del menú (uno por línea, ej: "1. Info" ):', (node.data.items||[]).join(''));
+          if(v!=null){ node.data.items = v.split('\n').filter(Boolean); render(); saveLocal(); }
+          break;
+        }
+        case 'decision': {
+          const v = prompt('Etiqueta de decisión:', node.data.label || '');
+          if(v!=null){ node.data.label = v; render(); saveLocal(); }
+          break;
+        }
+        case 'data': {
+          const v = prompt('Campos a recolectar (uno por línea):', (node.data.fields||[]).join(''));
+          if(v!=null){ node.data.fields = v.split('').filter(Boolean); render(); saveLocal(); }
+          break;
+        }
+        default: {
+          const v = prompt('Contenido:', (node.data.text || node.data.subtitle || ''));
+          if(v!=null){ if(node.data.subtitle!==undefined) node.data.subtitle=v; else node.data.text=v; render(); saveLocal(); }
+        }
+      }
+    }
+
+    // --- IO ---
+    function exportJSON(){
+      const blob = new Blob([JSON.stringify({ nodes: state.nodes, edges: state.edges }, null, 2)], { type:'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'chatbot-flow.json'; a.click(); URL.revokeObjectURL(url);
+      status('Diagrama exportado');
+    }
+
+    function importJSON(file){
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          const obj = JSON.parse(e.target.result);
+          if(Array.isArray(obj.nodes) && Array.isArray(obj.edges)){
+            state.nodes = obj.nodes; state.edges = obj.edges;
+            const maxId = Math.max(0, ...state.nodes.map(n=>parseInt((n.id||'').split('_')[1])||0), ...state.edges.map(e=>parseInt((e.id||'').split('_')[1])||0));
+            state.idCounter = isFinite(maxId) ? maxId+1 : 1;
+            render(); saveLocal(); status('Diagrama importado');
+          } else { alert('Archivo inválido'); }
+        } catch(err){ alert('No se pudo leer el JSON'); }
+      };
+      reader.readAsText(file);
+    }
+
+    function saveLocal(){ localStorage.setItem('chatbot_flow_v17', JSON.stringify({ nodes: state.nodes, edges: state.edges, idCounter: state.idCounter, pan: state.pan, zoom: state.zoom, snap: state.snap, grid: state.grid })); }
+    function loadLocal(){ try { const raw = localStorage.getItem('chatbot_flow_v17'); if(!raw) return; const obj = JSON.parse(raw); if(obj.nodes&&obj.edges){ state.nodes=obj.nodes; state.edges=obj.edges; state.idCounter=obj.idCounter||1; state.pan=obj.pan||{x:0,y:0}; state.zoom=obj.zoom||1; state.snap = obj.snap ?? true; state.grid = obj.grid || 25; } } catch{} }
+
+    // --- Graph utils & Validation ---
+    function outgoing(nodeId){ return state.edges.filter(e=>e.from===nodeId).map(e=>e.to); }
+    function incoming(nodeId){ return state.edges.filter(e=>e.to===nodeId).map(e=>e.from); }
+    function findStart(){ return state.nodes.find(n=>n.type==='start') || state.nodes[0]; }
+    function nodeById(id){ return state.nodes.find(n=>n.id===id); }
+
+    function validateGraph(){
+      const errors = [], warnings = [];
+      if(state.nodes.length===0) { errors.push('No hay nodos.'); return {errors,warnings}; }
+      const start = findStart();
+      if(!start) errors.push('Falta bloque Inicio.');
+      for(const e of state.edges){ if(!nodeById(e.from) || !nodeById(e.to)) errors.push(`Conexión inválida ${e.id}.`); }
+      const adj = new Map(); state.nodes.forEach(n=>adj.set(n.id, outgoing(n.id)));
+      const visited = new Set();
+      function dfs(u){ if(visited.has(u)) return; visited.add(u); (adj.get(u)||[]).forEach(dfs); }
+      if(start){ dfs(start.id); }
+      state.nodes.filter(n=>!visited.has(n.id)).forEach(n=>warnings.push(`Bloque \"${n.type}\" (${n.id}) es inalcanzable.`));
+      state.nodes.filter(n=>n.type!=='end' && outgoing(n.id).length===0).forEach(n=>warnings.push(`Bloque \"${n.type}\" (${n.id}) no tiene salidas.`));
+      const colors = new Map();
+      function dfsCycle(u){ const c = colors.get(u)||0; if(c===1) return true; if(c===2) return false; colors.set(u,1); for(const v of (adj.get(u)||[])){ if(dfsCycle(v)) return true; } colors.set(u,2); return false; }
+      let hasCycle=false; for(const n of state.nodes){ if(dfsCycle(n.id)){ hasCycle=true; break; } }
+      if(hasCycle) warnings.push('Hay ciclos en el flujo. Asegurate de tener condiciones de salida.');
+      if(start && incoming(start.id).length>0) warnings.push('El bloque Inicio tiene entradas.');
+      return {errors, warnings};
+    }
+
+    // ==== Preview helpers (WA) ====
+    function waClear(){ els.wa.innerHTML=''; els.waActions.innerHTML=''; }
+    function typing(ms=450){ return new Promise(r=>{ const id = 'typing_'+Math.random().toString(36).slice(2); const d=document.createElement('div'); d.id=id; d.className='w-full flex justify-start my-1'; d.innerHTML=`<div class=\"bg-white rounded-lg px-3 py-2 text-[13px] shadow inline-flex items-center gap-1\"><span class=\"w-1.5 h-1.5 bg-gray-400 rounded-full animate-pulse\"></span><span class=\"w-1.5 h-1.5 bg-gray-400 rounded-full animate-pulse\" style=\"animation-delay:120ms\"></span><span class=\"w-1.5 h-1.5 bg-gray-400 rounded-full animate-pulse\" style=\"animation-delay:240ms\"></span></div>`; els.wa.appendChild(d); els.waScroll.scrollTop = els.waScroll.scrollHeight; setTimeout(()=>{ d.remove(); r(); }, ms); }); }
+    function waMsg(text, side='in'){ const wrap=document.createElement('div'); wrap.className = `flex ${side==='out'?'justify-end':'justify-start'}`; const bubble=document.createElement('div'); bubble.className = `${side==='out'?'bg-[#d9fdd3]':'bg-white'} rounded-lg px-3 py-2 text-[13px] shadow max-w-[80%] whitespace-pre-wrap`; bubble.textContent=text; wrap.appendChild(bubble); els.wa.appendChild(wrap); els.waScroll.scrollTop = els.waScroll.scrollHeight; }
+    function waSys(text){ const w=document.createElement('div'); w.className='w-full flex justify-center my-2'; w.innerHTML=`<span class=\"text-[11px] bg-[#e1f5fe] text-gray-700 px-2 py-1 rounded-full\">${text}</span>`; els.wa.appendChild(w); els.waScroll.scrollTop = els.waScroll.scrollHeight; }
+    function waActionsClear(){ els.waActions.innerHTML=''; }
+    function waAction(label, cb){ const b=document.createElement('button'); b.className='text-[12px] bg-white border px-2 py-1 rounded hover:bg-gray-50'; b.textContent=label; b.onclick=cb; els.waActions.appendChild(b); }
+
+    function tpl(str, vars){ return (str||'').replace(/\{\{\s*([\wÀ-ÿ0-9_]+)\s*\}\}/g, (_,k)=> (vars[k]??'')); }
+    function stripQuotes(s){ return (s||'').replace(/^"|"$/g,''); }
+
+    function previewReset(){ state.preview.current=null; state.preview.variables={}; waClear(); waSys('Vista previa lista. Tocá Iniciar.'); }
+
+    async function previewStart(){
+      const res = validateGraph(); waClear();
+      if(res.errors.length){ waSys('No se puede iniciar preview.'); res.errors.forEach(e=>waSys('Error: '+e)); return; }
+      if(res.warnings.length){ res.warnings.forEach(w=>waSys('Aviso: '+w)); }
+      const s = findStart(); if(!s){ waSys('No hay bloque Inicio.'); return; }
+      state.preview.current = s.id; await stepRenderCurrent(true);
+    }
+
+    async function stepRenderCurrent(first=false){
+      const cur = nodeById(state.preview.current); if(!cur) return; const outs = outgoing(cur.id);
+      switch(cur.type){
+        case 'start':
+          if(first) waSys('Conversación iniciada');
+          if(outs.length===1){ state.preview.current = outs[0]; return stepRenderCurrent(); }
+          if(outs.length>1){ offerChoices(outs); } break;
+        case 'message':
+          await typing(); waMsg(stripQuotes(tpl(cur.data.text||'', state.preview.variables)), 'in');
+          if(outs.length===1){ state.preview.current = outs[0]; return stepRenderCurrent(); }
+          if(outs.length>1){ offerChoices(outs); } break;
+        case 'menu': {
+          await typing();
+          const items = (cur.data.items||[]).map(i=>tpl(i, state.preview.variables));
+          waMsg(items.join(''),'in');
+          waActionsClear();
+          items.forEach((txt, idx)=>{ waAction(txt, ()=>{ waActionsClear(); waMsg(txt,'out'); const next = outs[Math.min(idx, outs.length-1)] || outs[0]; state.preview.current = next; stepRenderCurrent(); }); });
+          break; }
+        case 'decision':
+          waSys(cur.data.label||'Elegí una opción'); offerChoices(outs); break;
+        case 'agent':
+          await typing(); waMsg(stripQuotes(tpl(cur.data.text||'Conectando con un agente…', state.preview.variables)),'in');
+          if(outs.length===1){ state.preview.current = outs[0]; return stepRenderCurrent(); }
+          if(outs.length>1){ offerChoices(outs); } break;
+        case 'ad':
+          await typing(); waMsg('🖼️ '+(cur.data.text||'Publicidad'),'in');
+          if(outs.length===1){ state.preview.current = outs[0]; return stepRenderCurrent(); }
+          if(outs.length>1){ offerChoices(outs); } break;
+        case 'data':
+          renderDataForm(cur, outs); break;
+        case 'end':
+          await typing(); waMsg(stripQuotes(tpl(cur.data.text||'Gracias por contactarnos', state.preview.variables)),'in'); waSys('Fin del flujo'); waActionsClear(); break;
+      }
+    }
+
+    function offerChoices(outIds){
+      waActionsClear();
+      outIds.forEach((tid)=>{ const tn = nodeById(tid); const label = nodeTitle(tn); waAction(label, ()=>{ waActionsClear(); waMsg(label,'out'); state.preview.current = tid; stepRenderCurrent(); }); });
+    }
+
+    function nodeTitle(n){ const meta = typeMeta[n.type]; return (meta?.title||n.type); }
+
+    function renderDataForm(cur, outs){
+      waActionsClear(); const fields = (cur.data.fields||[]);
+      if(fields.length){ waMsg('Necesitamos algunos datos: '+fields.join(', '),'in'); }
+      const form = document.createElement('div'); form.className = 'grid grid-cols-1 gap-2 w-full';
+      const inputs = {}; const errorsBox = document.createElement('div');
+      fields.forEach(f=>{
+        const key = f.trim(); const wrap = document.createElement('div'); wrap.className='flex flex-col';
+        const label = document.createElement('label'); label.className='text-[12px] text-gray-700'; label.textContent=key;
+        const input = document.createElement('input'); input.className='wa-input border rounded px-2 py-1 bg-white'; input.placeholder=key; input.value = state.preview.variables[key] || '';
+        inputs[key]=input; wrap.appendChild(label); wrap.appendChild(input); form.appendChild(wrap);
+      });
+      errorsBox.className='text-[12px] text-red-600';
+      els.waActions.appendChild(form); els.waActions.appendChild(errorsBox);
+
+      waAction('Enviar', ()=>{
+        errorsBox.textContent=''; const shown=[]; let ok=true;
+        const nombre = inputs['Nombre']?.value?.trim()||''; if('Nombre' in inputs && !nombre){ ok=false; shown.push('• Nombre es requerido'); }
+        const tel = inputs['Teléfono']?.value?.trim()||inputs['Telefono']?.value?.trim()||'';
+        const pref = inputs['Preferencia']?.value?.trim()||'';
+        if(('Teléfono' in inputs || 'Telefono' in inputs) && !/\d{6,}/.test((tel||'').replace(/\D/g,''))){ ok=false; shown.push('• Teléfono no válido'); }
+        if(!ok){ errorsBox.textContent = shown.join(''); return; }
+        if('Nombre' in inputs) state.preview.variables['Nombre']=nombre;
+        if('Teléfono' in inputs) state.preview.variables['Teléfono']=tel; if('Telefono' in inputs) state.preview.variables['Telefono']=tel;
+        if('Preferencia' in inputs) state.preview.variables['Preferencia']=pref;
+        const echo = [];
+        if(nombre) echo.push('Nombre: '+nombre);
+        if(tel) echo.push('Teléfono: '+tel);
+        if(pref) echo.push('Preferencia: '+pref);
+        if(echo.length) waMsg(echo.join(''),'out');
+        if(outs.length===1){ state.preview.current = outs[0]; waActionsClear(); stepRenderCurrent(); }
+        else if(outs.length>1){ offerChoices(outs); }
+      });
+      if(outs.length>1){ waAction('Saltar', ()=>{ waActionsClear(); offerChoices(outs); }); }
+    }
+
+    // --- Conditional input routing (WhatsApp input) ---
+    els.waSend.addEventListener('click', ()=>{ const t = els.waInput.value.trim(); if(!t) return; els.waInput.value=''; handleUserText(t); });
+    els.waInput.addEventListener('keydown', (e)=>{ if(e.key==='Enter'){ els.waSend.click(); } });
+
+    function handleUserText(text){
+      if(!state.preview.current) return;
+      const cur = nodeById(state.preview.current);
+      waMsg(text,'out');
+      const outs = outgoing(cur.id);
+      if(cur.type==='menu' && outs.length){
+        const n = parseInt(text.trim(),10);
+        if(!isNaN(n) && n>=1){ const idx = Math.min(n-1, outs.length-1); state.preview.current = outs[idx]; stepRenderCurrent(); return; }
+        const items = (cur.data.items||[]);
+        const found = items.findIndex(i=> i.toLowerCase().includes(text.toLowerCase()));
+        if(found>=0){ state.preview.current = outs[Math.min(found, outs.length-1)] || outs[0]; stepRenderCurrent(); return; }
+        waSys('No entendí. Probá con 1, 2 o 3.'); return;
+      }
+      if(cur.type==='decision' && outs.length){ state.preview.current = outs[0]; stepRenderCurrent(); return; }
+      if(outs.length===1){ state.preview.current = outs[0]; stepRenderCurrent(); }
+      else if(outs.length>1){ offerChoices(outs); }
+    }
+
+    // --- Marquee selection (selection box) ---
+    let mqActive=false, mqStart=null;
+    els.world.addEventListener('mousedown', (e)=>{
+      if(state.spaceDown) return; // pan ya lo maneja el canvas listener
+      if(e.target.closest('[data-node-id]')) return; // sobre nodo
+      if(state.mode!=='move') return;
+      mqActive=true; mqStart = clientToWorld(e.clientX, e.clientY);
+      els.marquee.classList.remove('hidden');
+      updateMarquee(mqStart, mqStart);
+    });
+    window.addEventListener('mousemove', (e)=>{
+      if(!mqActive) return; const cur = clientToWorld(e.clientX, e.clientY); updateMarquee(mqStart, cur); selectWithinMarquee(mqStart, cur, e.shiftKey); });
+    window.addEventListener('mouseup', ()=>{ if(mqActive){ mqActive=false; els.marquee.classList.add('hidden'); } });
+
+    function clientToWorld(cx, cy){ const rect = els.canvas.getBoundingClientRect(); const x = (cx - rect.left - state.pan.x)/state.zoom; const y = (cy - rect.top - state.pan.y)/state.zoom; return {x,y}; }
+    function updateMarquee(a,b){ const x=Math.min(a.x,b.x), y=Math.min(a.y,b.y), w=Math.abs(a.x-b.x), h=Math.abs(a.y-b.y); els.marquee.style.left=x+'px'; els.marquee.style.top=y+'px'; els.marquee.style.width=w+'px'; els.marquee.style.height=h+'px'; }
+    function selectWithinMarquee(a,b, additive){ const x1=Math.min(a.x,b.x), y1=Math.min(a.y,b.y), x2=Math.max(a.x,b.x), y2=Math.max(a.y,b.y); const ids=[]; for(const n of state.nodes){ if(n.x>=x1 && n.y>=y1 && n.x+256<=x2 && n.y+96<=y2){ ids.push(n.id); } } if(additive){ ids.forEach(id=> state.selectedNodeIds.add(id)); } else { state.selectedNodeIds = new Set(ids); } els.selCount.textContent = state.selectedNodeIds.size; render(); }
+
+    // --- Events ---
+    function setPreviewVisible(v){
+  if(v){
+    els.waPane.classList.remove('hidden');
+    els.canvasCol.classList.remove('lg:col-span-9','lg:col-span-12');
+    els.canvasCol.classList.add('lg:col-span-6');
+  } else {
+    els.waPane.classList.add('hidden');
+    els.canvasCol.classList.remove('lg:col-span-6');
+    els.canvasCol.classList.add('lg:col-span-9');
+  }
+}
+
+let previewVisible = true;
+els.btnTogglePreview.addEventListener('click', ()=>{ previewVisible = !previewVisible; setPreviewVisible(previewVisible); });
+els.btnClosePreview.addEventListener('click', ()=>{ previewVisible = false; setPreviewVisible(false); });
+
+    // Al iniciar (boot), forzá visible:
+    setPreviewVisible(true);
+
+    els.palette.forEach(btn=>{ btn.addEventListener('click', ()=>{ const type = btn.dataset.type; addNode(type, 60 + Math.random()*800, 60 + Math.random()*600); }); });
+    els.btnConnect.addEventListener('click', ()=>{ setMode(state.mode==='connect' ? 'move' : 'connect'); });
+    els.btnDelete.addEventListener('click', ()=>{ if(state.selectedNodeIds.size){ [...state.selectedNodeIds].forEach(id=>removeNode(id)); status('Bloques eliminados'); return; } if(state.selectedEdgeId){ removeEdge(state.selectedEdgeId); status('Conexión eliminada'); return; } status('No hay selección'); });
+    els.btnSave.addEventListener('click', exportJSON);
+    els.fileImport.addEventListener('change', (e)=>{ if(e.target.files[0]) importJSON(e.target.files[0]); e.target.value=''; setTimeout(()=>previewReset(), 100); });
+    els.btnValidate.addEventListener('click', ()=>{ const res=validateGraph(); waClear(); if(res.errors.length){ waSys('Errores de validación:'); res.errors.forEach(e=>waSys('• '+e)); } else { waSys('Validación OK'); } if(res.warnings.length){ res.warnings.forEach(w=>waSys('Aviso: '+w)); } });
+
+    els.snapToggle.addEventListener('change', ()=>{ state.snap = !!els.snapToggle.checked; saveLocal(); });
+    els.gridSize.addEventListener('change', ()=>{ const v = Math.max(8, Math.min(200, parseInt(els.gridSize.value||25,10))); state.grid = v; els.gridSize.value = v; applyGridBackground(); saveLocal(); });
+
+    // WA controls
+    els.waStart.addEventListener('click', previewStart);
+    els.waStep.addEventListener('click', ()=>{ if(!state.preview.current){ previewStart(); } else { stepRenderCurrent(); }});
+    els.waReset.addEventListener('click', previewReset);
+
+    // --- Boot ---
+    loadLocal();
+    els.snapToggle.checked = !!state.snap; els.gridSize.value = state.grid; applyGridBackground();
+    applyTransform();
+
+    if(state.nodes.length===0){
+      const nStart = addNode('start', 120, 40);
+      const nMsg   = addNode('message', 120, 160);
+      const nMenu  = addNode('menu', 120, 280);
+      const nDec   = addNode('decision', 420, 280);
+      const nInfo  = addNode('message', 40, 420); state.nodes.find(n=>n.id===nInfo).data.text='Bloque de Información para {{Nombre}}';
+      const nAgent = addNode('agent', 320, 420);
+      const nAd    = addNode('ad', 600, 420);
+      const nData  = addNode('data', 320, 560);
+      const nEnd   = addNode('end', 320, 700);
+      addEdge(nStart, nMsg); addEdge(nMsg, nMenu); addEdge(nMenu, nDec);
+      addEdge(nDec, nInfo); addEdge(nDec, nAgent); addEdge(nDec, nAd);
+      addEdge(nInfo, nData); addEdge(nAgent, nData); addEdge(nAd, nData); addEdge(nData, nEnd);
+    } else { render(); }
+
+    render();
+    setMode('move');
+    previewReset();
+    </script>
+    <div id="addMenu" class="ctx hidden bg-white rounded-xl shadow-lg border p-2">
+        <div class="relative">
+            <ul class="text-sm">
+                <li class="group relative">
+                    <button class="w-full text-left flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-50">
+          <span class="dot" style="background:#3b82f6"></span>
+          <span>Agregar respuesta del bot</span>
+          <i data-feather="chevron-right" class="ml-auto w-4 h-4"></i>
+        </button>
+                    <div class="submenu hidden group-hover:block bg-white rounded-xl shadow-lg border p-2">
+                        <button data-add-type="message" class="w-full text-left px-3 py-1.5 rounded hover:bg-gray-50">Mensaje</button>
+                        <button data-add-type="ad" class="w-full text-left px-3 py-1.5 rounded hover:bg-gray-50">Publicidad</button>
+                        <button data-add-type="end" class="w-full text-left px-3 py-1.5 rounded hover:bg-gray-50">Finalización</button>
+                    </div>
+                </li>
+                <li class="group relative">
+                    <button class="w-full text-left flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-50">
+          <span class="dot" style="background:#10b981"></span>
+          <span>Agregar entrada del usuario</span>
+          <i data-feather="chevron-right" class="ml-auto w-4 h-4"></i>
+        </button>
+                    <div class="submenu hidden group-hover:block bg-white rounded-xl shadow-lg border p-2">
+                        <button data-add-type="menu" class="w-full text-left px-3 py-1.5 rounded hover:bg-gray-50">Menú</button>
+                        <button data-add-type="data" class="w-full text-left px-3 py-1.5 rounded hover:bg-gray-50">Datos</button>
+                    </div>
+                </li>
+                <li>
+                    <button data-add-type="agent" class="w-full text-left flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-50">
+          <span class="dot" style="background:#6366f1"></span>
+          <span>Agregar agente de IA</span>
+        </button>
+                </li>
+                <li>
+                    <button data-add-type="action" class="w-full text-left flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-50">
+          <span class="dot" style="background:#f97316"></span>
+          <span>Agregar acción</span>
+        </button>
+                </li>
+                <li>
+                    <button data-add-type="decision" class="w-full text-left flex items-center gap-2 px-3 py-2 rounded hover:bg-gray-50">
+          <span class="dot" style="background:#f59e0b"></span>
+          <span>Agregar condición</span>
+        </button>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</body>
+
+</html>

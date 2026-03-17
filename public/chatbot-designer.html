@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diseñador de Chatbot - Diagrama de Flujo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/animejs/lib/anime.iife.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .flow-block {
+            transition: all 0.3s ease;
+        }
+        
+        .flow-block:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        
+        .arrow {
+            position: relative;
+            height: 60px;
+        }
+        
+        .arrow::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 15px solid #3B82F6;
+        }
+        
+        .connector {
+            position: relative;
+            height: 30px;
+        }
+        
+        .connector::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 2px;
+            height: 30px;
+            background-color: #3B82F6;
+        }
+        
+        .decision-diamond {
+            width: 80px;
+            height: 80px;
+            transform: rotate(45deg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .decision-content {
+            transform: rotate(-45deg);
+            width: 100%;
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body class="font-['Inter'] bg-gray-50 min-h-screen">
+    <div class="container mx-auto px-4 py-8">
+        <header class="mb-8 text-center">
+            <h1 class="text-3xl font-bold text-indigo-700 mb-2">Diseñador de Chatbot</h1>
+            <p class="text-gray-600">Crea tu diagrama de flujo estilo Botmaker</p>
+        </header>
+
+        <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+            <div class="flex justify-between items-center mb-6">
+                <h2 class="text-xl font-semibold text-gray-800">Diagrama de Flujo del Chatbot</h2>
+                <button class="bg-indigo-600 hover:bg-indigo-700 text-white px-4 py-2 rounded-lg flex items-center">
+                    <i data-feather="save" class="mr-2"></i> Guardar Diagrama
+                </button>
+            </div>
+
+            <!-- Flow Chart Container -->
+            <div class="overflow-x-auto">
+                <div class="inline-block min-w-full">
+                    <!-- Start Block -->
+                    <div class="flex flex-col items-center mb-4" data-aos="fade-up">
+                        <div class="flow-block bg-green-500 text-white rounded-lg p-4 w-64 text-center shadow-md">
+                            <div class="flex justify-center mb-2">
+                                <i data-feather="power" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="font-semibold">Inicio del Chatbot</h3>
+                            <p class="text-sm opacity-90">Conversación iniciada</p>
+                        </div>
+                        <div class="arrow"></div>
+                    </div>
+
+                    <!-- Welcome Block -->
+                    <div class="flex flex-col items-center mb-4" data-aos="fade-up" data-aos-delay="100">
+                        <div class="flow-block bg-blue-500 text-white rounded-lg p-4 w-64 text-center shadow-md">
+                            <div class="flex justify-center mb-2">
+                                <i data-feather="message-square" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="font-semibold">Mensaje de Bienvenida</h3>
+                            <p class="text-sm opacity-90">"¡Hola! ¿En qué puedo ayudarte hoy?"</p>
+                        </div>
+                        <div class="arrow"></div>
+                    </div>
+
+                    <!-- Menu Block -->
+                    <div class="flex flex-col items-center mb-4" data-aos="fade-up" data-aos-delay="200">
+                        <div class="flow-block bg-purple-500 text-white rounded-lg p-4 w-64 text-center shadow-md">
+                            <div class="flex justify-center mb-2">
+                                <i data-feather="list" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="font-semibold">Menú de Opciones</h3>
+                            <div class="text-left text-sm mt-2 bg-white bg-opacity-20 p-2 rounded">
+                                <p>1. Información</p>
+                                <p>2. Contactar agente</p>
+                                <p>3. Promociones</p>
+                            </div>
+                        </div>
+                        <div class="connector"></div>
+                    </div>
+
+                    <!-- Decision Point -->
+                    <div class="flex justify-center mb-4" data-aos="fade-up" data-aos-delay="300">
+                        <div class="decision-diamond bg-yellow-500 shadow-md">
+                            <div class="decision-content">
+                                <i data-feather="git-branch" class="mx-auto text-white"></i>
+                                <p class="text-white text-xs font-semibold">Elección del usuario</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Branching Paths -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8" data-aos="fade-up" data-aos-delay="400">
+                        <!-- Option 1 -->
+                        <div class="flex flex-col items-center">
+                            <div class="text-xs bg-gray-200 px-2 py-1 rounded mb-2">Opción 1</div>
+                            <div class="flow-block bg-blue-400 text-white rounded-lg p-3 w-56 text-center shadow-md">
+                                <h3 class="font-semibold text-sm">Bloque de Información</h3>
+                                <p class="text-xs opacity-90 mt-1">Muestra detalles sobre servicios</p>
+                            </div>
+                            <div class="arrow"></div>
+                            <div class="flow-block bg-gray-300 text-gray-800 rounded-lg p-3 w-56 text-center shadow-md">
+                                <h3 class="font-semibold text-sm">Mensaje de Texto</h3>
+                                <p class="text-xs opacity-90 mt-1">"¿Necesitas más información?"</p>
+                            </div>
+                        </div>
+
+                        <!-- Option 2 -->
+                        <div class="flex flex-col items-center">
+                            <div class="text-xs bg-gray-200 px-2 py-1 rounded mb-2">Opción 2</div>
+                            <div class="flow-block bg-red-400 text-white rounded-lg p-3 w-56 text-center shadow-md">
+                                <div class="flex justify-center mb-1">
+                                    <i data-feather="user" class="w-4 h-4"></i>
+                                </div>
+                                <h3 class="font-semibold text-sm">Redirección a Agente</h3>
+                                <p class="text-xs opacity-90 mt-1">"Conectando con un agente..."</p>
+                            </div>
+                            <div class="h-8 flex items-center justify-center">
+                                <div class="w-4 h-4 rounded-full bg-red-400"></div>
+                            </div>
+                            <div class="flow-block bg-red-500 text-white rounded-lg p-3 w-56 text-center shadow-md">
+                                <h3 class="font-semibold text-sm">Cola de Atención</h3>
+                                <p class="text-xs opacity-90 mt-1">"Eres el número 3 en la fila"</p>
+                            </div>
+                        </div>
+
+                        <!-- Option 3 -->
+                        <div class="flex flex-col items-center">
+                            <div class="text-xs bg-gray-200 px-2 py-1 rounded mb-2">Opción 3</div>
+                            <div class="flow-block bg-pink-400 text-white rounded-lg p-3 w-56 text-center shadow-md">
+                                <div class="flex justify-center mb-1">
+                                    <i data-feather="image" class="w-4 h-4"></i>
+                                </div>
+                                <h3 class="font-semibold text-sm">Bloque de Publicidad</h3>
+                                <p class="text-xs opacity-90 mt-1">Imagen + Texto promocional</p>
+                            </div>
+                            <div class="arrow"></div>
+                            <div class="flow-block bg-yellow-400 text-white rounded-lg p-3 w-56 text-center shadow-md">
+                                <h3 class="font-semibold text-sm">Mensaje de Advertencia</h3>
+                                <p class="text-xs opacity-90 mt-1">"Oferta válida por tiempo limitado"</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Data Collection -->
+                    <div class="flex flex-col items-center mb-4" data-aos="fade-up" data-aos-delay="500">
+                        <div class="flow-block bg-indigo-400 text-white rounded-lg p-4 w-64 text-center shadow-md">
+                            <div class="flex justify-center mb-2">
+                                <i data-feather="database" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="font-semibold">Recolección de Datos</h3>
+                            <div class="text-left text-sm mt-2 bg-white bg-opacity-20 p-2 rounded">
+                                <p>Nombre: [variable]</p>
+                                <p>Teléfono: [variable]</p>
+                                <p>Preferencia: [variable]</p>
+                            </div>
+                        </div>
+                        <div class="arrow"></div>
+                    </div>
+
+                    <!-- End Block -->
+                    <div class="flex flex-col items-center" data-aos="fade-up" data-aos-delay="600">
+                        <div class="flow-block bg-gray-600 text-white rounded-lg p-4 w-64 text-center shadow-md">
+                            <div class="flex justify-center mb-2">
+                                <i data-feather="flag" class="w-6 h-6"></i>
+                            </div>
+                            <h3 class="font-semibold">Finalización</h3>
+                            <p class="text-sm opacity-90">"Gracias por contactarnos"</p>
+                            <div class="mt-2 pt-2 border-t border-white border-opacity-20">
+                                <p class="text-xs">¿Volver al menú principal?</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Controls Panel -->
+        <div class="bg-white rounded-xl shadow-md p-6">
+            <h2 class="text-xl font-semibold text-gray-800 mb-4">Añadir Nuevo Bloque</h2>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <button class="bg-blue-100 hover:bg-blue-200 text-blue-800 px-4 py-3 rounded-lg flex flex-col items-center">
+                    <i data-feather="message-square" class="w-5 h-5 mb-1"></i>
+                    <span class="text-sm">Mensaje</span>
+                </button>
+                <button class="bg-purple-100 hover:bg-purple-200 text-purple-800 px-4 py-3 rounded-lg flex flex-col items-center">
+                    <i data-feather="list" class="w-5 h-5 mb-1"></i>
+                    <span class="text-sm">Menú</span>
+                </button>
+                <button class="bg-yellow-100 hover:bg-yellow-200 text-yellow-800 px-4 py-3 rounded-lg flex flex-col items-center">
+                    <i data-feather="git-branch" class="w-5 h-5 mb-1"></i>
+                    <span class="text-sm">Decisión</span>
+                </button>
+                <button class="bg-red-100 hover:bg-red-200 text-red-800 px-4 py-3 rounded-lg flex flex-col items-center">
+                    <i data-feather="user" class="w-5 h-5 mb-1"></i>
+                    <span class="text-sm">Agente</span>
+                </button>
+                <button class="bg-green-100 hover:bg-green-200 text-green-800 px-4 py-3 rounded-lg flex flex-col items-center">
+                    <i data-feather="image" class="w-5 h-5 mb-1"></i>
+                    <span class="text-sm">Publicidad</span>
+                </button>
+                <button class="bg-indigo-100 hover:bg-indigo-200 text-indigo-800 px-4 py-3 rounded-lg flex flex-col items-center">
+                    <i data-feather="database" class="w-5 h-5 mb-1"></i>
+                    <span class="text-sm">Datos</span>
+                </button>
+                <button class="bg-pink-100 hover:bg-pink-200 text-pink-800 px-4 py-3 rounded-lg flex flex-col items-center">
+                    <i data-feather="alert-triangle" class="w-5 h-5 mb-1"></i>
+                    <span class="text-sm">Advertencia</span>
+                </button>
+                <button class="bg-gray-100 hover:bg-gray-200 text-gray-800 px-4 py-3 rounded-lg flex flex-col items-center">
+                    <i data-feather="flag" class="w-5 h-5 mb-1"></i>
+                    <span class="text-sm">Finalizar</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        feather.replace();
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simple animation for blocks
+            anime({
+                targets: '.flow-block',
+                opacity: [0, 1],
+                translateY: [20, 0],
+                delay: anime.stagger(100),
+                easing: 'easeOutExpo'
+            });
+        });
+    </script>
+</body>
+
+</html>
