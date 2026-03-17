@@ -1,124 +1,140 @@
-# 🤖 Cognibot — Chatbot Flow Builder
+# 🤖 Cognibot — Visual Chatbot Flow Builder
 
-A visual chatbot flow builder with WhatsApp integration, user authentication, and a real-time canvas editor. Built to let teams design, test and deploy conversation flows without writing code.
+> **Automatizá tus conversaciones** con un constructor visual de flujos para WhatsApp, Facebook Messenger e Instagram.
 
-![Stack](https://img.shields.io/badge/Frontend-React%20%2B%20Vite%20%2B%20TypeScript-blue)
-![Stack](https://img.shields.io/badge/Backend-FastAPI%20%2B%20Python-green)
-![Stack](https://img.shields.io/badge/Database-MySQL%208-orange)
-![Stack](https://img.shields.io/badge/Deploy-Docker%20%2B%20Nginx-lightgrey)
+<div align="center">
 
----
+**[🚀 Ver Demo en Vivo](http://67.205.171.161:8080/landing.html)** &nbsp;|&nbsp; **[📱 Iniciar Sesión](http://67.205.171.161:8080/login.html)**
 
-## ✨ Features
+![Frontend](https://img.shields.io/badge/Frontend-React%20%2B%20Vite%20%2B%20TypeScript-61DAFB?logo=react)
+![Backend](https://img.shields.io/badge/Backend-FastAPI%20%2B%20Python-009688?logo=fastapi)
+![Database](https://img.shields.io/badge/Database-MySQL%208-4479A1?logo=mysql)
+![Docker](https://img.shields.io/badge/Deploy-Docker%20%2B%20Nginx-2496ED?logo=docker)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-- **Visual Flow Builder** — drag-and-drop canvas to design chatbot conversation flows
-- **Node types** — Message, Options, Condition, Delay, Input, Action, End
-- **WhatsApp Integration** — connect to Meta Cloud API to deploy flows to WhatsApp
-- **User Authentication** — JWT-based login/register system
-- **Real-time Chat Simulator** — test your flows before going live
-- **Dashboard & Analytics** — track conversations and bot performance
-- **Multi-project** — manage multiple chatbot projects from one account
+</div>
 
 ---
 
-## 🏗️ Tech Stack
+## 📸 Vista previa
 
-| Layer | Technology |
-|-------|-----------|
+| Landing Page | Login |
+|---|---|
+| ![Landing](public/screenshots/landing.png) | ![Login](public/screenshots/login.png) |
+
+---
+
+## ✨ Funcionalidades
+
+- 🎨 **Constructor visual drag & drop** — diseñá flujos con nodos conectables en un canvas
+- 💬 **Tipos de nodos** — Mensaje, Opciones, Condición, Delay, Input, Acción, Fin
+- 📲 **Integración WhatsApp** — conectá a la Meta Cloud API para publicar flujos
+- 🔐 **Autenticación JWT** — sistema de login/registro seguro
+- 🧪 **Simulador de chat** — probá tus flujos antes de publicarlos
+- 📊 **Dashboard y analytics** — seguí conversaciones y rendimiento del bot
+- 📁 **Multi-proyecto** — gestioná múltiples chatbots desde una sola cuenta
+
+---
+
+## 🏗️ Stack tecnológico
+
+| Capa | Tecnología |
+|------|-----------|
 | Frontend | React 18, Vite, TypeScript, Tailwind CSS, shadcn/ui |
-| Flow Canvas | @xyflow/react (React Flow) |
+| Canvas | @xyflow/react (React Flow) |
 | Backend | FastAPI, SQLAlchemy, Uvicorn |
-| Database | MySQL 8.0 |
-| Auth | JWT (python-jose + passlib) |
-| Containerization | Docker, Docker Compose, Nginx |
+| Base de datos | MySQL 8.0 |
+| Autenticación | JWT (python-jose + passlib) |
+| Deploy | Docker, Docker Compose, Nginx |
 
 ---
 
-## 🚀 Quick Start (Local)
+## 🚀 Inicio rápido (Local)
 
-### Prerequisites
-- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed
+### Prerequisitos
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) instalado
 
-### 1. Clone the repo
+### 1. Clonar el repo
 ```bash
 git clone https://github.com/thomas-sagredo/cognibot.git
 cd cognibot
 ```
 
-### 2. Configure environment variables
+### 2. Configurar variables de entorno
 ```bash
 cp .env.example .env
-# Edit .env with your values (see .env.example for guidance)
+# Editá .env con tus valores (ver .env.example como referencia)
 ```
 
-### 3. Start all services
+### 3. Levantar todos los servicios
 ```bash
 docker compose up -d --build
 ```
 
-### 4. Open the app
-| Service | URL |
+### 4. Abrir la app
+
+| Servicio | URL |
 |---------|-----|
-| **Frontend** | http://localhost:8080 |
+| **Landing** | http://localhost:8080/landing.html |
+| **App** | http://localhost:8080 |
 | **API Docs** | http://localhost:8000/docs |
-| **Backend** | http://localhost:8000 |
 
 ---
 
-## ⚙️ Environment Variables
+## ⚙️ Variables de entorno
 
-Copy `.env.example` to `.env` and fill in the values:
+Copiá `.env.example` a `.env` y completá los valores:
 
 ```env
-# Database
+# Base de datos
 MYSQL_DATABASE=cognibot_db
 MYSQL_USER=cognibot
-MYSQL_PASSWORD=your_secure_password
-MYSQL_ROOT_PASSWORD=your_secure_root_password
+MYSQL_PASSWORD=elige_una_password_segura
+MYSQL_ROOT_PASSWORD=elige_una_root_password_segura
 
-# Backend — JWT Security
-SECRET_KEY=generate-with: python -c "import secrets; print(secrets.token_hex(32))"
+# JWT Security
+SECRET_KEY=genera-con: python -c "import secrets; print(secrets.token_hex(32))"
 ALGORITHM=HS256
 ACCESS_TOKEN_EXPIRE_MINUTES=60
 
-# CORS (comma-separated origins)
+# CORS
 ALLOWED_ORIGINS=http://localhost:8080
 
-# Frontend → Backend URL
+# URL del backend que usa el frontend
 VITE_API_BASE_URL=http://localhost:8000
 ```
 
-> ⚠️ Never commit your `.env` file. It is already in `.gitignore`.
+> ⚠️ Nunca subas tu `.env` — ya está en `.gitignore`.
 
 ---
 
-## 📁 Project Structure
+## 📁 Estructura del proyecto
 
 ```
 cognibot/
-├── src/                    # React frontend source
-│   ├── components/         # UI components & flow nodes
+├── src/                    # Frontend React
+│   ├── components/         # Componentes UI y nodos del canvas
 │   ├── hooks/              # Custom React hooks
-│   ├── pages/              # App pages (Dashboard, Builder, etc.)
-│   ├── services/           # API client
+│   ├── pages/              # Páginas (Dashboard, Builder, etc.)
+│   ├── services/           # Cliente API
 │   └── types/              # TypeScript types
-├── proyects/               # FastAPI backend
-│   ├── main.py             # API routes & app setup
-│   ├── models.py           # Database models
-│   ├── auth.py             # Authentication logic
-│   ├── whatsapp_service.py # WhatsApp Meta API integration
-│   ├── init_db.py          # DB initialization
-│   └── requirements.txt    # Python dependencies
-├── public/                 # Static assets (login.html, etc.)
-├── Dockerfile              # Frontend container (Nginx)
-├── docker-compose.yml      # Orchestrates all 3 services
-├── nginx.conf              # Nginx SPA config
-└── .env.example            # Environment variables template
+├── proyects/               # Backend FastAPI
+│   ├── main.py             # Rutas API y configuración
+│   ├── models.py           # Modelos de base de datos
+│   ├── auth.py             # Lógica de autenticación
+│   ├── whatsapp_service.py # Integración Meta Cloud API
+│   ├── init_db.py          # Inicialización de la DB
+│   └── requirements.txt    # Dependencias Python
+├── public/                 # Assets estáticos (landing.html, login.html)
+├── Dockerfile              # Contenedor frontend (Nginx)
+├── docker-compose.yml      # Orquesta los 3 servicios
+├── nginx.conf              # Config Nginx SPA
+└── .env.example            # Template de variables de entorno
 ```
 
 ---
 
-## 🛠️ Development (without Docker)
+## 🛠️ Desarrollo (sin Docker)
 
 **Frontend:**
 ```bash
@@ -137,6 +153,6 @@ uvicorn main:app --reload --port 8000
 
 ---
 
-## 📄 License
+## 📄 Licencia
 
-MIT
+MIT — libre para usar, modificar y distribuir.
