@@ -31,6 +31,10 @@ services:
     container_name: cognibot-backend
     environment:
       DATABASE_URL: mysql+pymysql://${MYSQL_USER:-cognibot}:${MYSQL_PASSWORD:-cognibot2025}@mysql:3306/${MYSQL_DATABASE:-cognibot_db}
+      SECRET_KEY: ${SECRET_KEY:-changeme_use_a_real_secret_in_production}
+      ALGORITHM: ${ALGORITHM:-HS256}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-60}
+      ALLOWED_ORIGINS: ${ALLOWED_ORIGINS:-http://localhost:8080}
     ports:
       - "8000:8000"
     depends_on:
